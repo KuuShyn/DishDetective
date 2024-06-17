@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.thesis.dishdetective_xml.databinding.FragmentCapturedBinding
 
+
 class CapturedFragment : Fragment() {
 
     private var _binding: FragmentCapturedBinding? = null
@@ -27,7 +28,6 @@ class CapturedFragment : Fragment() {
         arguments?.let {
             capturedBitmap = it.getParcelable(ARG_BITMAP)
             boundingBoxes = it.getParcelableArrayList(ARG_BOUNDING_BOXES)
-
 
         }
     }
@@ -83,10 +83,24 @@ class CapturedFragment : Fragment() {
             // The touch was inside a bounding box, handle it here
             Log.d(TAG, "Touched box: ${touchedBox.clsName}")
 
+            val food = touchedBox.clsName
+            val caloriesPerServing = "96mg"
+            val ironIntakePerServing = "69mg"
+            val allergenInformation = "akoo allergen haha"
+            val caloriesReason = "Calories are Too High!"
+            val ironIntakeReason = "Iron intake is Too Low."
+            val allergenReason = "No Allergen boii."
+
+
             // Show the details fragment
-
-
-            val detailsFragment = DetailsFragment.newInstance(touchedBox.clsName, "bruuu", "yes")
+            val detailsFragment = DetailsFragment.newInstance(
+                food,
+                caloriesPerServing,
+                caloriesReason,
+                ironIntakePerServing,
+                ironIntakeReason,
+                allergenInformation,
+                allergenReason)
             detailsFragment.show(parentFragmentManager, "DetailsFragment")
         }
     }
@@ -103,7 +117,6 @@ class CapturedFragment : Fragment() {
                 }
             }
     }
-
 
 
     override fun onDestroyView() {

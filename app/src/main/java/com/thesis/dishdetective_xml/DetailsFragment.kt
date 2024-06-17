@@ -44,13 +44,23 @@ class DetailsFragment : DialogFragment() {
 
         // Get the arguments
         val food = arguments?.getString(ARG_FOOD)
-        val reasons = arguments?.getString(ARG_REASONS)
-        val isDiabetic = arguments?.getString(ARG_IS_DIABETIC)
+        val caloriesPerServing = arguments?.getString(ARG_CALORIES_PER_SERVING)
+        val ironIntakePerServing = arguments?.getString(ARG_IRON_INTAKE_PER_SERVING)
+        val allergenInformation = arguments?.getString(ARG_ALLERGEN_INFORMATION)
+        val caloriesReason = arguments?.getString(ARG_CALORIES_REASON)
+        val ironIntakeReason = arguments?.getString(ARG_IRON_INTAKE_REASON)
+        val allergenReason = arguments?.getString(ARG_ALLERGEN_REASON)
 
         // Set the text of the TextViews
         binding.foodValue.text = food
-        binding.reasonsValue.text = reasons
-        binding.isDiabeticValue.text = isDiabetic
+        binding.caloriesValue.text = caloriesPerServing
+        binding.ironValue.text = ironIntakePerServing
+        binding.allergenValue.text = allergenInformation
+
+        // Set the text of the TextViews
+        binding.caloriesReason.text = caloriesReason
+        binding.ironReason.text = ironIntakeReason
+        binding.allergenReason.text = allergenReason
     }
 
     override fun onDestroyView() {
@@ -60,14 +70,32 @@ class DetailsFragment : DialogFragment() {
 
     companion object {
         private const val ARG_FOOD = "arg_food"
-        private const val ARG_REASONS = "arg_reasons"
-        private const val ARG_IS_DIABETIC = "arg_is_diabetic"
+        private const val ARG_CALORIES_PER_SERVING = "arg_calories_per_serving"
+        private const val ARG_CALORIES_REASON = "arg_calories_reasons"
+        private const val ARG_IRON_INTAKE_PER_SERVING = "arg_iron_intake_per_serving"
+        private const val ARG_IRON_INTAKE_REASON = "arg_iron_intake_reasons"
+        private const val ARG_ALLERGEN_INFORMATION = "arg_allergen_information"
+        private const val ARG_ALLERGEN_REASON = "arg_allergen_reasons"
 
-        fun newInstance(food: String, reasons: String, isDiabetic: String): DetailsFragment {
+        fun newInstance(
+            food: String,
+            caloriesPerServing: String,
+            caloriesReason: String,
+            ironIntakePerServing: String,
+            ironReason: String,
+            allergenInformation: String,
+            allergenReason: String
+        ): DetailsFragment {
             val args = Bundle().apply {
                 putString(ARG_FOOD, food)
-                putString(ARG_REASONS, reasons)
-                putString(ARG_IS_DIABETIC, isDiabetic)
+                putString(ARG_CALORIES_PER_SERVING, caloriesPerServing)
+                putString(ARG_CALORIES_REASON, caloriesReason)
+                putString(ARG_IRON_INTAKE_PER_SERVING, ironIntakePerServing)
+                putString(ARG_IRON_INTAKE_REASON, ironReason)
+                putString(ARG_ALLERGEN_INFORMATION, allergenInformation)
+                putString(ARG_ALLERGEN_REASON, allergenReason)
+
+
             }
             val fragment = DetailsFragment()
             fragment.arguments = args

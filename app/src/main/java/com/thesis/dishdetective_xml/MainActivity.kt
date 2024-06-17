@@ -24,13 +24,21 @@ import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.thesis.dishdetective_xml.Constants.LABELS_PATH
 import com.thesis.dishdetective_xml.Constants.MODEL_PATH
 import com.thesis.dishdetective_xml.OverlayView.Companion.getBoundingBoxColor
+import com.thesis.dishdetective_xml.SupabaseClient.supabase
 import java.util.concurrent.ExecutorService
 import com.thesis.dishdetective_xml.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), Detector.DetectorListener {
@@ -47,11 +55,40 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
     private lateinit var cameraExecutor: ExecutorService
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+
+
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                getData()
+            }
+        }
+
+//        if (savedInstanceState == null) {
+//            showProfilingFragment()
+//        }
+
+        val composeView = findViewById<ComposeView>(R.id.compose_view)
+//        composeView.bringToFront()
+        composeView.setContent {
+            ProfileScreen(onNextClick = {
+                startCamera()
+                binding.captureButton.visibility = View.VISIBLE
+                binding.inferenceTime.visibility = View.VISIBLE
+            }
+
+            )
+        }
+
+        binding.viewFinder.visibility = View.GONE
         binding.isGpu.visibility = View.GONE
+        binding.inferenceTime.visibility = View.GONE
+        binding.captureButton.visibility = View.GONE
+
+
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -60,18 +97,31 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             detector?.setup()
         }
 
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
+
 
         bindListeners()
         loadUserProfile()
+
     }
+
+
+    private suspend fun getData() {
+        try {
+            val client = supabase
+            val supabaseResponse = client.postgrest["users"].select()
+            val data = supabaseResponse.decodeList<UserProfile.UProfile>()
+
+            Log.d("supabase", "Data Successful bitch: $data")
+
+        } catch (e: Exception) {
+            Log.e("supabase", "Error fetching data", e)
+        }
+    }
+
 
     private fun bindListeners() {
         binding.apply {
+//            is gpu
             isGpu.setOnCheckedChangeListener { buttonView, isChecked ->
                 cameraExecutor.submit {
                     detector?.setup(isGpu = isChecked)
@@ -103,15 +153,34 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
                             }
 //
                             // Create a new bitmap with the rotated matrix
-                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                            bitmap = Bitmap.createBitmap(
+                                bitmap,
+                                0,
+                                0,
+                                bitmap.width,
+                                bitmap.height,
+                                matrix,
+                                true
+                            )
 
                             detector?.detect(bitmap)
 
                             // Draw bounding boxes on the bitmap
-                            val bitmapWithBoxes = drawBoundingBoxesOnBitmap(bitmap, binding.overlay.getBoundingBoxes())
+                            val bitmapWithBoxes = drawBoundingBoxesOnBitmap(
+                                bitmap,
+                                binding.overlay.getBoundingBoxes()
+                            )
 
                             // Now you can use the bitmap
-                            showDetailsFragment(bitmapWithBoxes)
+                            showCapturedFragment(bitmapWithBoxes)
+
+                            // Show the bottom sheet
+                            lifecycleScope.launch {
+                                findViewById<ComposeView>(R.id.compose_view).setContent {
+                                    BottomSheet().PartialBottomSheet(false)
+                                }
+                            }
+
                         }
 
                         override fun onError(exception: ImageCaptureException) {
@@ -122,7 +191,11 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             }
         }
     }
-    private fun drawBoundingBoxesOnBitmap(bitmap: Bitmap?, boundingBoxes: List<BoundingBox>): Bitmap {
+
+    private fun drawBoundingBoxesOnBitmap(
+        bitmap: Bitmap?,
+        boundingBoxes: List<BoundingBox>
+    ): Bitmap {
         if (bitmap == null) return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
 
         val bitmapCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -130,7 +203,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         val paint = Paint().apply {
             color = Color.WHITE
             style = Paint.Style.STROKE
-            strokeWidth = 13F
+            strokeWidth = 18F
         }
 
         val textPaint = Paint().apply {
@@ -154,7 +227,6 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             val bottom = box.y2 * bitmap.height
 
             paint.color = getBoundingBoxColor(this, box.clsName)
-
 
             canvas.drawRect(left, top, right, bottom, paint)
 
@@ -184,12 +256,13 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 
-    private fun startCamera() {
+    internal fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
             bindCameraUseCases()
         }, ContextCompat.getMainExecutor(this))
+        binding.viewFinder.visibility = View.VISIBLE
     }
 
     private fun bindCameraUseCases() {
@@ -286,7 +359,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
     private fun loadUserProfile() {
         // This is a mock setup. In a real scenario, you might load this from a database or API.
-        val userProfile = UserProfile(
+        val userProfile = UserPro(
             allergies = listOf("pork_adobo"), // Example allergy
             diabeticSafeFoods = listOf("chicken_adobo") // Example diabetic-safe food
         )
@@ -313,11 +386,11 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
     override fun onResume() {
         super.onResume()
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            requestPermissionLauncher.launch(REQUIRED_PERMISSIONS)
-        }
+//        if (allPermissionsGranted()) {
+//            startCamera()
+//        } else {
+//            requestPermissionLauncher.launch(REQUIRED_PERMISSIONS)
+//        }
     }
 
     companion object {
@@ -345,7 +418,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         }
     }
 
-    private fun showDetailsFragment(bitmap: Bitmap) {
+
+    private fun showCapturedFragment(bitmap: Bitmap) {
         // Hide other views
         binding.viewFinder.visibility = View.GONE
         binding.overlay.visibility = View.GONE
@@ -368,5 +442,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         transaction.replace(R.id.fragment_container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+
+
     }
 }

@@ -4,55 +4,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
-
-        <TextView
-            android:id="@+id/foodLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/food_label"
-            android:textAppearance="?attr/textAppearanceHeadline6" />
 
         <TextView
             android:id="@+id/foodValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@string/food"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:layout_marginStart="150dp"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="ShynFood" />
 
         <TextView
-            android:id="@+id/reasonsLabel"
+            android:id="@+id/caloriesPerServing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reasons_label"
-            android:textAppearance="?attr/textAppearanceHeadline6" />
+            android:text="@string/calories_per_serving"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_below="@+id/foodValue" />
 
         <TextView
-            android:id="@+id/reasonsValue"
-            tools:text="is delicious of course"
+            android:id="@+id/caloriesValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceBody1"
-            />
+            tools:text="96mg"
+            android:layout_below="@+id/caloriesPerServing" />
 
         <TextView
-            android:id="@+id/isDiabeticLabel"
+            android:id="@+id/caloriesReason"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/is_diabetic_label"
-            android:textAppearance="?attr/textAppearanceHeadline6" />
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="Too high in calories!"
+            android:layout_below="@+id/caloriesValue" />
 
         <TextView
-            android:id="@+id/isDiabeticValue"
+            android:id="@+id/ironIntakePerServing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="No"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:text="@string/iron_intake_per_serving"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:layout_below="@+id/caloriesReason" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/ironValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="69mg"
+            android:layout_below="@+id/ironIntakePerServing" />
+
+        <TextView
+            android:id="@+id/ironReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="Too low in iron!"
+            android:layout_below="@+id/ironValue" />
+
+        <TextView
+            android:id="@+id/allergenInformation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:text="@string/allergen_information"
+            android:layout_below="@+id/ironReason" />
+
+        <TextView
+            android:id="@+id/allergenValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="NONE"
+            android:layout_below="@+id/allergenInformation" />
+
+        <TextView
+            android:id="@+id/allergenReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="this dish does not contain any allergens"
+            android:layout_below="@+id/allergenValue" />
+
+
+    </RelativeLayout>
 
 </ScrollView>

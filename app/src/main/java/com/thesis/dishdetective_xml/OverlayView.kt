@@ -89,6 +89,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     companion object {
         private const val BOUNDING_RECT_TEXT_PADDING = 8
         fun getBoundingBoxColor(context: Context, foodLabel: String): Int {
+//            TODO: Implement this function
             val userProfile = UserProfileManager.getUserProfile()
             return when {
                 userProfile?.allergies?.contains(foodLabel) == true ->
