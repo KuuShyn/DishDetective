@@ -24,21 +24,14 @@ import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.thesis.dishdetective_xml.Constants.LABELS_PATH
 import com.thesis.dishdetective_xml.Constants.MODEL_PATH
 import com.thesis.dishdetective_xml.OverlayView.Companion.getBoundingBoxColor
-import com.thesis.dishdetective_xml.SupabaseClient.supabase
 import java.util.concurrent.ExecutorService
 import com.thesis.dishdetective_xml.databinding.ActivityMainBinding
-import dagger.hilt.android.AndroidEntryPoint
-import io.github.jan.supabase.postgrest.postgrest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.thesis.dishdetective_xml.ui.capture.CapturedFragment
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), Detector.DetectorListener {
@@ -60,35 +53,10 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         setContentView(binding.root)
         ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
 
-
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                getData()
-            }
-        }
-
-//        if (savedInstanceState == null) {
-//            showProfilingFragment()
-//        }
-
-        val composeView = findViewById<ComposeView>(R.id.compose_view)
-//        composeView.bringToFront()
-        composeView.setContent {
-            ProfileScreen(onNextClick = {
-                startCamera()
-                binding.captureButton.visibility = View.VISIBLE
-                binding.inferenceTime.visibility = View.VISIBLE
-            }
-
-            )
-        }
-
-        binding.viewFinder.visibility = View.GONE
+//        binding.viewFinder.visibility = View.GONE
         binding.isGpu.visibility = View.GONE
-        binding.inferenceTime.visibility = View.GONE
-        binding.captureButton.visibility = View.GONE
-
-
+//        binding.inferenceTime.visibility = View.GONE
+//        binding.captureButton.visibility = View.GONE
 
         cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -97,27 +65,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
             detector?.setup()
         }
 
-
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        }
 
         bindListeners()
         loadUserProfile()
 
     }
-
-
-    private suspend fun getData() {
-        try {
-            val client = supabase
-            val supabaseResponse = client.postgrest["users"].select()
-            val data = supabaseResponse.decodeList<UserProfile.UProfile>()
-
-            Log.d("supabase", "Data Successful bitch: $data")
-
-        } catch (e: Exception) {
-            Log.e("supabase", "Error fetching data", e)
-        }
-    }
-
 
     private fun bindListeners() {
         binding.apply {
@@ -173,13 +130,6 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
                             // Now you can use the bitmap
                             showCapturedFragment(bitmapWithBoxes)
-
-                            // Show the bottom sheet
-                            lifecycleScope.launch {
-                                findViewById<ComposeView>(R.id.compose_view).setContent {
-                                    BottomSheet().PartialBottomSheet(false)
-                                }
-                            }
 
                         }
 
@@ -256,7 +206,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 
-    internal fun startCamera() {
+    private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()

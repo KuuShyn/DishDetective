@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
@@ -19,12 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
       />
-
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/compose_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
 
     <androidx.camera.view.PreviewView
         android:id="@+id/view_finder"

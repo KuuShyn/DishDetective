@@ -29,4 +29,10 @@
     <string name="height">Height</string>
     <string name="title_activity_main2">MainActivity2</string>
     <string name="title_activity_jet">JetActivity</string>
+    <string name="goal_loss">To lose weight, you need to consume fewer calories than your body burns, creating a calorie deficit. This forces your body to use stored fat for energy, leading to weight loss.</string>
+    <string name="goal_gain">To gain weight, you need to consume more calories than your body burns, creating a calorie surplus. This forces your body to use stored fat for energy, leading to weight gain.</string>
+    <string name="goal_maintain">To maintain weight, you need to consume the same number of calories that your body burns. This keeps your weight stable.</string>
+    <string name="calories_desc">Calories are a measure of energy provided by food. The balance between calories consumed and calories expended determines your body weight.</string>
+    <string name="lower_calorie_content">We prioritize dishes that are low to moderate in calories based on your daily allowance. This helps you achieve a calorie deficit while keeping within safe and healthy limits.</string>
+
 </resources>
