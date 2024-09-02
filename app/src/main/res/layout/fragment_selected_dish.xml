@@ -1,0 +1,133 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/foodValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            tools:text="ShynFood" />
+
+        <TextView
+            android:id="@+id/caloriesPerServing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/calories_per_serving"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_below="@+id/foodValue"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/caloriesValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="96mg"
+            android:layout_below="@+id/caloriesPerServing"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/caloriesReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody2"
+            tools:text="Too high in calories!"
+            android:layout_below="@+id/caloriesValue"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/ironIntakePerServing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/iron_intake_per_serving"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_below="@+id/caloriesReason"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/ironValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody1"
+            tools:text="69mg"
+            android:layout_below="@+id/ironIntakePerServing"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/ironReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody2"
+            tools:text="Too low in iron!"
+            android:layout_below="@+id/ironValue"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/ingredientsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients:"
+            android:layout_below="@+id/ironReason"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <TextView
+            android:id="@+id/ingredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ingredientsTitle"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <TextView
+            android:id="@+id/nutrientsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nutrients:"
+            android:layout_below="@+id/ingredients"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <TextView
+            android:id="@+id/proteins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nutrientsTitle"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <TextView
+            android:id="@+id/fat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/proteins"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <TextView
+            android:id="@+id/carbs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fat"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+        <TextView
+            android:id="@+id/fibers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/carbs"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBody1" />
+
+    </RelativeLayout>
+
+</ScrollView>
