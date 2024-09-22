@@ -1,8 +1,14 @@
 package com.thesis.dishdetective_xml
 
-data class UserPro(
-    val allergies: List<String>,
-    val diabeticSafeFoods: List<String>
+data class UserPro (
+    val age: Int,
+    val weight: Float,
+    val heightFeet: Int,
+    val heightInches: Int,
+    val gender: String,
+    val weightGoal: String,
+    val weightChangePerWeek: Float,
+
 )
 
 object UserProfileManager {

@@ -17,13 +17,16 @@ class CapturedDetailsFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCapturedDetailsBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
 
         """Goal: Weight loss\n${getString(R.string.goal_loss)}""".also { binding.goals.text = it }
         """Calories\n${getString(R.string.calories_desc)}""".also {binding.nutrients.text = it}

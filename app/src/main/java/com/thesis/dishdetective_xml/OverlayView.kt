@@ -92,10 +92,7 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
 //            TODO: Implement this function
             val userProfile = UserProfileManager.getUserProfile()
             return when {
-                userProfile?.allergies?.contains(foodLabel) == true ->
-                    ContextCompat.getColor(context, R.color.orange)
-                userProfile?.diabeticSafeFoods?.contains(foodLabel) == true ->
-                    ContextCompat.getColor(context, R.color.red)
+
                 else -> ContextCompat.getColor(context, R.color.green)
             }
         }

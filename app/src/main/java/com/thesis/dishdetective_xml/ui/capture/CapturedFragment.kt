@@ -3,15 +3,18 @@ package com.thesis.dishdetective_xml.ui.capture
 
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.thesis.dishdetective_xml.BoundingBox
 import com.thesis.dishdetective_xml.MainActivity
+import com.thesis.dishdetective_xml.R
 import com.thesis.dishdetective_xml.databinding.FragmentCapturedBinding
 import com.thesis.dishdetective_xml.ui.captured.CapturedDetailsFragment
 import com.thesis.dishdetective_xml.ui.details.SelectedDishFragment
@@ -68,6 +71,15 @@ class CapturedFragment : Fragment() {
         binding.closeButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+
+        binding.showDetailsButton.setOnClickListener {
+            showCapturedDetails()
+        }
+
+        binding.showDetailsButton.setColorFilter(
+            ContextCompat.getColor(requireContext(), R.color.green),
+            PorterDuff.Mode.SRC_IN
+        )
     }
     private fun showCapturedDetails() {
         val capturedDetailsFragment = CapturedDetailsFragment()
@@ -125,10 +137,10 @@ class CapturedFragment : Fragment() {
         super.onDestroyView()
 
         // Show the views again
-        (activity as MainActivity).binding.viewFinder.visibility = View.VISIBLE
-        (activity as MainActivity).binding.overlay.visibility = View.VISIBLE
-        (activity as MainActivity).binding.captureButton.visibility = View.VISIBLE
-        (activity as MainActivity).binding.inferenceTime.visibility = View.VISIBLE
+//        binding.viewFinder.visibility = View.VISIBLE
+//        binding.overlay.visibility = View.VISIBLE
+//        binding.captureButton.visibility = View.VISIBLE
+//        binding.inferenceTime.visibility = View.VISIBLE
         // Add other views you want to show here
     }
 }

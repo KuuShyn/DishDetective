@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".ui.recipe_analyzer.RecipeAnalyzerFragment">
+
+        <!-- Dish Name -->
+        <TextView
+            android:id="@+id/editDishNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dish Name"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editDishNameInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:hintTextColor="@color/black"
+            style="@style/LoginTextInputOuterFieldStyle"
+            app:layout_constraintTop_toBottomOf="@id/editDishNameTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editDishNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g., Spaghetti Bolognese"
+                style="@style/LoginTextInputInnerFieldStyle" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Servings -->
+        <TextView
+            android:id="@+id/editServingsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="# of servings"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editDishNameInputLayout"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editServingsInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:hintTextColor="@color/black"
+            style="@style/LoginTextInputOuterFieldStyle"
+            app:layout_constraintTop_toBottomOf="@id/editServingsTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editServingsText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="e.g., 4"
+                android:inputType="number"
+                style="@style/LoginTextInputInnerFieldStyle" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- com.thesis.dishdetective_xml.ui.recipe_analyzer.Recipe Title -->
+        <TextView
+            android:id="@+id/editRecipeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recipe:"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editServingsInputLayout"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Ingredient Header -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/editHeaderConstraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/editRecipeTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/editIngredientHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Ingredient"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/editQuantityHeader"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="128dp"
+                android:text="Quantity"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/editIngredientHeader"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Ingredient List -->
+        <!-- Dynamic Ingredients Container -->
+        <LinearLayout
+            android:id="@+id/editIngredientsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/editHeaderConstraintLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Add Ingredient Button -->
+        <Button
+            android:id="@+id/addIngredientButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Add Ingredient"
+            app:layout_constraintTop_toBottomOf="@id/editIngredientsContainer"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Check Nutrition Button -->
+        <Button
+            android:id="@+id/updateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="16dp"
+            android:text="Update"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addIngredientButton"
+            app:layout_constraintVertical_bias="1.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
