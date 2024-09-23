@@ -1,7 +1,6 @@
 package com.thesis.dishdetective_xml.ui.recipe_analyzer
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +45,10 @@ class RecipeHistoryFragment : Fragment() {
             adapter = recipeAdapter
         }
 
+        binding.addRecipeButton.setOnClickListener {
+            navigateToRecipeAnalyzer()
+        }
+
         fetchRecipes()
     }
 
@@ -61,11 +64,24 @@ class RecipeHistoryFragment : Fragment() {
                         recipe.documentId = document.id
                         recipeAdapter.addRecipe(recipe)
                     }
+                    updateUI()
                 }
                 .addOnFailureListener { e ->
                     // Handle the error
                     Toast.makeText(context, "Error fetching recipes: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
+        }
+    }
+
+    private fun updateUI() {
+        if (recipes.isEmpty()) {
+            binding.recyclerView.visibility = View.GONE
+            binding.emptyTextView.visibility = View.VISIBLE
+            binding.addRecipeButton.visibility = View.VISIBLE
+        } else {
+            binding.recyclerView.visibility = View.VISIBLE
+            binding.emptyTextView.visibility = View.GONE
+            binding.addRecipeButton.visibility = View.GONE
         }
     }
 
@@ -77,12 +93,19 @@ class RecipeHistoryFragment : Fragment() {
                 putStringArrayList("ingredients", ArrayList(recipe.ingredients))
                 putStringArrayList("quantities", ArrayList(recipe.quantities.map { it.toString() }))
                 putString("documentId", recipe.documentId)
-
             }
         }
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, recipeResultFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun navigateToRecipeAnalyzer() {
+        val recipeAnalyzerFragment = RecipeAnalyzerFragment()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, recipeAnalyzerFragment)
             .addToBackStack(null)
             .commit()
     }

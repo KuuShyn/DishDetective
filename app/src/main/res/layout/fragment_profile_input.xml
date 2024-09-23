@@ -1,128 +1,362 @@
 <!-- res/layout/fragment_profile.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
-
-    <TextView
-        android:id="@+id/ageTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Age:"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/ageInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBody1" />
-
-    <TextView
-        android:id="@+id/weightTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight (kg):"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/weightInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBody1" />
-
-    <TextView
-        android:id="@+id/heightTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Height (feet, in):"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/heightFeetInput"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/nameTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:hint="Feet"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:layout_marginTop="16dp"
+            android:text="Name:"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
 
-        <EditText
-            android:id="@+id/heightInchesInput"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameInputLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:hint="Inches"
-            android:textAppearance="?attr/textAppearanceBody1" />
+            android:layout_marginTop="8dp"
+            app:boxStrokeColor="@color/green"
+            app:hintTextColor="@color/black"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameInput"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:foregroundTint="#E12C2C"
+                android:hint="Enter your name"
+                android:inputType="text"
+                app:hintTextColor="@color/black"
+                app:boxStrokeColor="@color/green" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/ageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Age:"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ageInputLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_marginTop="8dp"
+            app:boxStrokeColor="@color/green"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ageInput"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your age"
+                android:inputType="number"
+                app:boxStrokeColor="@color/green"
+                app:hintTextColor="@color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/weightTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Weight (kg):"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/weightInputLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="8dp"
+
+            app:errorEnabled="true"
+            app:hintTextColor="@color/black"
+            app:boxStrokeColor="@color/green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/weightInput"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foregroundTint="#BD1E1E"
+                android:hint="Enter your weight"
+                app:hintTextColor="@color/black"
+                app:boxStrokeColor="@color/green"
+                android:inputType="numberDecimal"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/heightTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Height (feet, in):"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="77dp"
+            android:baselineAligned="false" android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/heightFeetInputLayout"
+                style="@style/LoginTextInputOuterFieldStyle"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:layout_weight="1"
+                app:boxStrokeColor="@color/green"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/heightFeetInput"
+                    style="@style/LoginTextInputInnerFieldStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Feet"
+                    android:inputType="number"
+                    app:boxStrokeColor="@color/green"
+                    app:hintTextColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/heightInchesInputLayout"
+                style="@style/LoginTextInputOuterFieldStyle"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                app:boxStrokeColor="@color/green"
+                app:errorEnabled="true"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/heightInchesInput"
+                    style="@style/LoginTextInputInnerFieldStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Inches"
+                    android:inputType="number"
+                    app:boxStrokeColor="@color/green"
+                    app:hintTextColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/genderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Gender:"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/genderMale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Male"
+                android:buttonTint="@color/radio_button_selector"
+                />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/genderFemale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Female"
+                android:buttonTint="@color/radio_button_selector"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/weightGoalTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Weight Goal:"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/weightGoalInputLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_marginTop="8dp"
+            app:boxStrokeColor="@color/green"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/black">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/weightGoalInput"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter your weight goal"
+                android:inputType="numberDecimal"
+                app:boxStrokeColor="@color/green"
+                app:hintTextColor="@color/black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/weightChangePerWeekTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Weight Change Per Week (lb):"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/weightChangePerWeekInputLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            app:boxStrokeColor="@color/green"
+            app:errorEnabled="true"
+            app:hintTextColor="@color/green">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/weightChangePerWeekInput"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter weight change"
+                android:inputType="numberDecimal"
+                app:hintTextColor="@color/black"
+                app:boxStrokeColor="@color/green"
+
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/conditionsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Conditions:"
+            android:textAppearance="?attr/textAppearanceSubtitle1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/anemiaTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Anemia:"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/anemiaSwitch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/anemiaSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/anemiaToggleTitle"
+                app:layout_constraintHorizontal_bias="0.300"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@id/anemiaTitle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:thumbTint="@color/switch_thumb_color"
+                app:trackTint="@color/switch_track_color"
+                />
+
+            <TextView
+                android:id="@+id/anemiaToggleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="show iron levels"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/anemiaSwitch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/anemiaSwitch"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"            >
+
+            <TextView
+                android:id="@+id/osteoporosisTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Osteoporosis:"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/osteoporosisSwitch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/osteoporosisSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/osteoporosisToggleTitle"
+                app:layout_constraintHorizontal_bias="0.140"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@id/osteoporosisTitle"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                app:thumbTint="@color/switch_thumb_color"
+                app:trackTint="@color/switch_track_color"
+                />
+
+            <TextView
+                android:id="@+id/osteoporosisToggleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="show calcium levels"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/osteoporosisSwitch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/osteoporosisSwitch"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="102dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/green"
+            android:text="save"
+            android:textColor="@android:color/white" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/genderTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gender:"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/genderInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBody1" />
-
-    <TextView
-        android:id="@+id/weightGoalTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight Goal:"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/weightGoalInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBody1" />
-
-    <TextView
-        android:id="@+id/weightChangePerWeekTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Weight Change Per Week (lb):"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/weightChangePerWeekInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="8dp"
-        android:textAppearance="?attr/textAppearanceBody1" />
-
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:layout_marginTop="16dp" />
-
-</LinearLayout>
+</ScrollView>

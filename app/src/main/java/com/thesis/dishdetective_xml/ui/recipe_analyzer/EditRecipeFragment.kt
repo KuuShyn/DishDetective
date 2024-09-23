@@ -36,9 +36,9 @@ class EditRecipeFragment : Fragment() {
 
         dishNameText = view.findViewById(R.id.editDishNameText)
         servingsText = view.findViewById(R.id.editServingsText)
-        editIngredientsContainer = view.findViewById(R.id.editIngredientsContainer)
+        editIngredientsContainer = view.findViewById(R.id.addIngredientsContainer)
         addIngredientButton = view.findViewById(R.id.addIngredientButton)
-        updateButton = view.findViewById(R.id.updateButton)
+        updateButton = view.findViewById(R.id.checkNutritionButton)
 
         // Get passed data (if available)
         val dishName = arguments?.getString("dishName")

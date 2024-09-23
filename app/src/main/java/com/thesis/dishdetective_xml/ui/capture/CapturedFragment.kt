@@ -19,6 +19,8 @@ import com.thesis.dishdetective_xml.databinding.FragmentCapturedBinding
 import com.thesis.dishdetective_xml.ui.captured.CapturedDetailsFragment
 import com.thesis.dishdetective_xml.ui.details.SelectedDishFragment
 
+// File: CapturedFragment.kt
+
 class CapturedFragment : Fragment() {
 
     private var _binding: FragmentCapturedBinding? = null
@@ -26,6 +28,18 @@ class CapturedFragment : Fragment() {
 
     private var capturedBitmap: Bitmap? = null
     private var boundingBoxes: List<BoundingBox>? = null
+
+    companion object {
+        private const val ARG_BITMAP = "bitmap"
+        private const val ARG_BOUNDING_BOXES = "bounding_boxes"
+        fun newInstance(bitmap: Bitmap, boundingBoxes: List<BoundingBox>) =
+            CapturedFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_BITMAP, bitmap)
+                    putParcelableArrayList(ARG_BOUNDING_BOXES, ArrayList(boundingBoxes))
+                }
+            }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +54,7 @@ class CapturedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCapturedBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -64,10 +79,6 @@ class CapturedFragment : Fragment() {
         }
         showCapturedDetails()
 
-        binding.showCapturedDetailsButton.setOnClickListener {
-            showCapturedDetails()
-        }
-
         binding.closeButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -81,66 +92,14 @@ class CapturedFragment : Fragment() {
             PorterDuff.Mode.SRC_IN
         )
     }
+
     private fun showCapturedDetails() {
         val capturedDetailsFragment = CapturedDetailsFragment()
         capturedDetailsFragment.show(parentFragmentManager, "CapturedDetailsFragment")
     }
 
     private fun handleTouch(x: Float, y: Float) {
-        // Convert touch coordinates to bitmap coordinates
-        val imageView = binding.capturedImageView
-        val bitmap = capturedBitmap ?: return
-        val bitmapX = x * bitmap.width / imageView.width
-        val bitmapY = y * bitmap.height / imageView.height
-
-        // Check if the touch is inside any of the bounding boxes
-        val touchedBox = boundingBoxes?.find { box ->
-            bitmapX >= box.x1 * bitmap.width && bitmapX <= box.x2 * bitmap.width &&
-                    bitmapY >= box.y1 * bitmap.height && bitmapY <= box.y2 * bitmap.height
-        }
-
-        if (touchedBox != null) {
-            // The touch was inside a bounding box, handle it here
-            Log.d(TAG, "Touched box: ${touchedBox.clsName}")
-            val food = touchedBox.clsName
-            val caloriesPerServing = "96mg"
-            val ironIntakePerServing = "69mg"
-            val caloriesReason = "Calories are Too High!"
-            val ironIntakeReason = "Iron intake is Too Low."
-
-            // Show the details fragment
-            val detailsFragment = SelectedDishFragment.newInstance(
-                food,
-                caloriesPerServing,
-                caloriesReason,
-                ironIntakePerServing,
-                ironIntakeReason
-            )
-            detailsFragment.show(parentFragmentManager, "SelectedDishFragment")
-        }
-    }
-
-    companion object {
-        private const val ARG_BITMAP = "bitmap"
-        private const val ARG_BOUNDING_BOXES = "bounding_boxes"
-
-        fun newInstance(bitmap: Bitmap, boundingBoxes: List<BoundingBox>) =
-            CapturedFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_BITMAP, bitmap)
-                    putParcelableArrayList(ARG_BOUNDING_BOXES, ArrayList(boundingBoxes))
-                }
-            }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        // Show the views again
-//        binding.viewFinder.visibility = View.VISIBLE
-//        binding.overlay.visibility = View.VISIBLE
-//        binding.captureButton.visibility = View.VISIBLE
-//        binding.inferenceTime.visibility = View.VISIBLE
-        // Add other views you want to show here
+        // Currently, we won't handle bounding boxes since they're not accepted anymore.
+        Log.d(TAG, "Touch coordinates: x=$x, y=$y")
     }
 }

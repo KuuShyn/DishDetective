@@ -84,6 +84,9 @@ dependencies {
     implementation(libs.tensorflowLiteGpuApi)
     implementation(libs.tensorflowLiteApi)
     implementation(libs.tensorflowLiteGpu)
+    implementation(libs.tensorflow.lite.select.tf.ops)
+    implementation(libs.tensorflow.lite.metadata)
+
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.firestore)

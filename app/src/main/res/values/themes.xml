@@ -1,8 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.DishDetective_xml" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.DishDetective_xml" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="colorSurface">@android:color/white</item>
     </style>
 
     <style name="Theme.DishDetective_xml" parent="Base.Theme.DishDetective_xml" />
@@ -12,19 +14,32 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">15dp</item>
         <item name="android:layout_marginBottom">15dp</item>
+
     </style>
 
     <style name="LoginTextInputInnerFieldStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColor">@color/green</item>
+        <item name="android:textColorHint">@color/green</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">14sp</item>
         <item name="android:singleLine">true</item>
+
     </style>
 
     <style name="Theme.DishDetective_xml.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.DishDetective_xml.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="shapeAppearanceOverlay">@style/MyShapeAppearance</item>
+    </style>
+    <style name="MyShapeAppearance">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerFamilyTopRight">cut</item>
+        <item name="cornerFamilyBottomRight">cut</item>
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeBottomLeft">32dp</item>
+    </style>
 </resources>

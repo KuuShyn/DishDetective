@@ -1,78 +1,116 @@
-// File: ProfileFragment.kt
+// File: ProfileInputFragment.kt
 package com.thesis.dishdetective_xml.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.thesis.dishdetective_xml.UserPro
-import com.thesis.dishdetective_xml.UserProfileManager
-import com.thesis.dishdetective_xml.databinding.FragmentProfileInputBinding
-
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.thesis.dishdetective_xml.R
+import com.thesis.dishdetective_xml.SignInActivity
 
 class ProfileInputFragment : Fragment() {
 
-    private var _binding: FragmentProfileInputBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var nameInput: TextInputEditText
+    private lateinit var ageInput: TextInputEditText
+    private lateinit var weightInput: TextInputEditText
+    private lateinit var heightFeetInput: TextInputEditText
+    private lateinit var heightInchesInput: TextInputEditText
+    private lateinit var weightGoalInput: TextInputEditText
+    private lateinit var weightChangePerWeekInput: TextInputEditText
+    private lateinit var anemiaSwitch: SwitchMaterial
+    private lateinit var osteoporosisSwitch: SwitchMaterial
+    private lateinit var saveButton: Button
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileInputBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
-        val userProfile = UserProfileManager.getUserProfile()
-        userProfile?.let {
-            binding.ageInput.setText(it.age.toString())
-            binding.weightInput.setText(it.weight.toString())
-            binding.heightFeetInput.setText(it.heightFeet.toString())
-            binding.heightInchesInput.setText(it.heightInches.toString())
-            binding.genderInput.setText(it.gender)
-            binding.weightGoalInput.setText(it.weightGoal)
-            binding.weightChangePerWeekInput.setText(it.weightChangePerWeek.toString())
+        val view = inflater.inflate(R.layout.fragment_profile_input, container, false)
+
+        nameInput = view.findViewById(R.id.nameInput)
+        ageInput = view.findViewById(R.id.ageInput)
+        weightInput = view.findViewById(R.id.weightInput)
+        heightFeetInput = view.findViewById(R.id.heightFeetInput)
+        heightInchesInput = view.findViewById(R.id.heightInchesInput)
+        weightGoalInput = view.findViewById(R.id.weightGoalInput)
+        weightChangePerWeekInput = view.findViewById(R.id.weightChangePerWeekInput)
+        anemiaSwitch = view.findViewById(R.id.anemiaSwitch)
+        osteoporosisSwitch = view.findViewById(R.id.osteoporosisSwitch)
+        saveButton = view.findViewById(R.id.saveButton)
+
+        // Retrieve the arguments
+        val email = arguments?.getString("email")
+        val pass = arguments?.getString("pass")
+
+        // Bind save button
+        saveButton.setOnClickListener {
+            firebaseAuth.createUserWithEmailAndPassword(email!!, pass!!)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("ProfileInputFragment", "User created successfully")
+                        saveProfileData()
+
+                        val intent = Intent(activity, SignInActivity::class.java)
+                        startActivity(intent)
+                        activity?.finish()
+
+                    } else {
+                        Log.w("ProfileInputFragment", "User creation failed", task.exception)
+                    }
+                }
         }
 
-        binding.saveButton.setOnClickListener {
-            saveUserProfile()
-        }
+        return view
     }
 
-    private fun saveUserProfile() {
-        val age = binding.ageInput.text.toString().toIntOrNull()
-        val weight = binding.weightInput.text.toString().toFloatOrNull()
-        val heightFeet = binding.heightFeetInput.text.toString().toIntOrNull()
-        val heightInches = binding.heightInchesInput.text.toString().toIntOrNull()
-        val gender = binding.genderInput.text.toString()
-        val weightGoal = binding.weightGoalInput.text.toString()
-        val weightChangePerWeek = binding.weightChangePerWeekInput.text.toString().toFloatOrNull()
+    private fun saveProfileData() {
+        val name = nameInput.text.toString()
+        val age = ageInput.text.toString().toIntOrNull()
+        val weight = weightInput.text.toString().toFloatOrNull()
+        val heightFeet = heightFeetInput.text.toString().toIntOrNull()
+        val heightInches = heightInchesInput.text.toString().toIntOrNull()
+        val weightGoal = weightGoalInput.text.toString()
+        val weightChangePerWeek = weightChangePerWeekInput.text.toString().toFloatOrNull()
+        val isAnemiaChecked = anemiaSwitch.isChecked
+        val isOsteoporosisChecked = osteoporosisSwitch.isChecked
 
-        if (age != null && weight != null && heightFeet != null && heightInches != null && weightChangePerWeek != null) {
-            val userProfile = UserPro(
-                age = age,
-                weight = weight,
-                heightFeet = heightFeet,
-                heightInches = heightInches,
-                gender = gender,
-                weightGoal = weightGoal,
-                weightChangePerWeek = weightChangePerWeek
+        val userId = firebaseAuth.uid ?: return
 
-            )
-            UserProfileManager.setUserProfile(userProfile)
-            Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, "Please fill in all fields correctly", Toast.LENGTH_SHORT).show()
-        }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        val profileData = hashMapOf(
+            "name" to name,
+            "age" to age,
+            "weight" to weight,
+            "heightFeet" to heightFeet,
+            "heightInches" to heightInches,
+            "weightGoal" to weightGoal,
+            "weightChangePerWeek" to weightChangePerWeek,
+            "isAnemiaChecked" to isAnemiaChecked,
+            "isOsteoporosisChecked" to isOsteoporosisChecked
+        )
+
+        firestore.collection("users").document(userId.toString())
+            .collection("profile")
+            .add(profileData)
+            .addOnSuccessListener {
+                Log.d("ProfileInputFragment", "Profile data saved successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.w("ProfileInputFragment", "Error saving profile data", e)
+            }
     }
 }

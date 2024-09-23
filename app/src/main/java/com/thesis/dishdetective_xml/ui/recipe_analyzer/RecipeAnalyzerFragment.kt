@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -21,7 +23,7 @@ import com.thesis.dishdetective_xml.R
 class RecipeAnalyzerFragment : Fragment() {
 
     private lateinit var ingredientsContainer: LinearLayout
-    private lateinit var addIngredientButton: Button
+    private lateinit var addIngredientButton: MaterialButton
     private lateinit var checkNutritionButton: Button
     private lateinit var dishNameInput: TextInputEditText
     private lateinit var servingsInput: TextInputEditText
@@ -54,9 +56,9 @@ class RecipeAnalyzerFragment : Fragment() {
         predefinedIngredientInput.setAdapter(ingredientAdapter)
 
         // Reference to dynamic container and buttons
-        ingredientsContainer = view.findViewById(R.id.editIngredientsContainer)
+        ingredientsContainer = view.findViewById(R.id.addIngredientsContainer)
         addIngredientButton = view.findViewById(R.id.addIngredientButton)
-        checkNutritionButton = view.findViewById(R.id.updateButton)
+        checkNutritionButton = view.findViewById(R.id.checkNutritionButton)
 
         // Add more ingredient fields when the button is clicked
         addIngredientButton.setOnClickListener {
@@ -159,7 +161,7 @@ class RecipeAnalyzerFragment : Fragment() {
             )
         ).apply {
             layoutParams = LinearLayout.LayoutParams(
-                129.dpToPx(requireContext()),
+                133.dpToPx(requireContext()),
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 1f
             )
@@ -176,7 +178,7 @@ class RecipeAnalyzerFragment : Fragment() {
         ).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                52.dpToPx(requireContext())
+                48.dpToPx(requireContext())
             )
             setPadding(18.dpToPx(requireContext()), 0, 0, 0)
             hint = "e.g., Tomatoes"

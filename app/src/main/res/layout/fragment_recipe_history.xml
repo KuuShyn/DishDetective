@@ -8,4 +8,19 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/emptyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No recipes found"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/addRecipeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Recipe"
+        android:visibility="gone"/>
 </FrameLayout>

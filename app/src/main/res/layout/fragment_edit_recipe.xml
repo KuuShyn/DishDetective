@@ -118,7 +118,7 @@
         <!-- Ingredient List -->
         <!-- Dynamic Ingredients Container -->
         <LinearLayout
-            android:id="@+id/editIngredientsContainer"
+            android:id="@+id/addIngredientsContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -133,12 +133,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Add Ingredient"
-            app:layout_constraintTop_toBottomOf="@id/editIngredientsContainer"
+            app:layout_constraintTop_toBottomOf="@id/addIngredientsContainer"
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- Check Nutrition Button -->
         <Button
-            android:id="@+id/updateButton"
+            android:id="@+id/checkNutritionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"

@@ -1,6 +1,5 @@
 package com.thesis.dishdetective_xml
 
-
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -55,9 +54,6 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
             val right = it.x2 * width
             val bottom = it.y2 * height
 
-            // Determine the box color based on the food condition
-            boxPaint.color = getBoundingBoxColor(context, it.clsName)
-
             canvas.drawRect(left, top, right, bottom, boxPaint)
             val drawableText = it.clsName
 
@@ -81,20 +77,11 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         invalidate()
     }
 
-
     fun getBoundingBoxes(): List<BoundingBox> {
         return results
     }
 
     companion object {
         private const val BOUNDING_RECT_TEXT_PADDING = 8
-        fun getBoundingBoxColor(context: Context, foodLabel: String): Int {
-//            TODO: Implement this function
-            val userProfile = UserProfileManager.getUserProfile()
-            return when {
-
-                else -> ContextCompat.getColor(context, R.color.green)
-            }
-        }
     }
 }
