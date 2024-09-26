@@ -5,20 +5,46 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/dishName"
-        android:layout_width="wrap_content"
+    <!-- Horizontal layout for dish name, servings, and delete button -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Dish Name"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/servings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Servings" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-    <!-- Add other fields as needed -->
+            <TextView
+                android:id="@+id/dishName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dish Name"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/servings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Servings" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete recipe"
+            android:layout_gravity="end" />
+
+    </LinearLayout>
+
+    <!-- Add other fields if needed -->
 
 </LinearLayout>

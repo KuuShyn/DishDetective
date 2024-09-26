@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.thesis.dishdetective_xml.R
 import com.thesis.dishdetective_xml.databinding.FragmentRecipeHistoryBinding
+import com.thesis.dishdetective_xml.util.Debounce.setDebounceClickListener
 
 class RecipeHistoryFragment : Fragment() {
 
@@ -34,18 +35,25 @@ class RecipeHistoryFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         firebaseAuth = FirebaseAuth.getInstance()
 
-        recipeAdapter = RecipeAdapter(recipes) { recipe, position ->
-            // Handle item click
-            Toast.makeText(context, "Clicked on ${recipe.dishName}", Toast.LENGTH_SHORT).show()
-            recipeAdapter.setSelectedPosition(position)
-            navigateToRecipeResult(recipe)
-        }
+        // Initialize adapter with delete functionality
+        recipeAdapter = RecipeAdapter(recipes,
+            { recipe, position ->
+                // Handle item click
+                Toast.makeText(context, "Clicked on ${recipe.dishName}", Toast.LENGTH_SHORT).show()
+                recipeAdapter.setSelectedPosition(position)
+                navigateToRecipeResult(recipe)
+            },
+            { recipe, position ->
+                // Handle delete button click
+                deleteRecipe(recipe, position)
+            }
+        )
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = recipeAdapter
         }
 
-        binding.addRecipeButton.setOnClickListener {
+        binding.addRecipeButton.setDebounceClickListener {
             navigateToRecipeAnalyzer()
         }
 
@@ -58,13 +66,13 @@ class RecipeHistoryFragment : Fragment() {
             db.collection("users").document(currentUser.uid).collection("recipes")
                 .get()
                 .addOnSuccessListener { documents ->
-                    recipes.clear() // Clear the existing list to avoid duplicates
+                    val newRecipes = mutableListOf<Recipe>()
                     for (document in documents) {
                         val recipe = document.toObject(Recipe::class.java)
                         recipe.documentId = document.id
-                        recipeAdapter.addRecipe(recipe)
+                        newRecipes.add(recipe)
                     }
-                    updateUI()
+                    updateRecipes(newRecipes)
                 }
                 .addOnFailureListener { e ->
                     // Handle the error
@@ -73,17 +81,47 @@ class RecipeHistoryFragment : Fragment() {
         }
     }
 
+    private fun updateRecipes(newRecipes: List<Recipe>) {
+        val oldSize = recipes.size
+        recipes.clear()
+        recipeAdapter.notifyItemRangeRemoved(0, oldSize)
+        recipes.addAll(newRecipes)
+        recipeAdapter.notifyItemRangeInserted(0, newRecipes.size)
+        updateUI()
+    }
+
     private fun updateUI() {
         if (recipes.isEmpty()) {
-            binding.recyclerView.visibility = View.GONE
-            binding.emptyTextView.visibility = View.VISIBLE
-            binding.addRecipeButton.visibility = View.VISIBLE
+            binding.recyclerView.animate().alpha(0f).withEndAction {
+                binding.recyclerView.visibility = View.GONE
+                binding.emptyTextView.visibility = View.VISIBLE
+                binding.addRecipeButton.visibility = View.VISIBLE
+            }.start()
         } else {
             binding.recyclerView.visibility = View.VISIBLE
+            binding.recyclerView.animate().alpha(1f).start()
             binding.emptyTextView.visibility = View.GONE
             binding.addRecipeButton.visibility = View.GONE
         }
     }
+
+    private fun deleteRecipe(recipe: Recipe, position: Int) {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            db.collection("users").document(currentUser.uid).collection("recipes")
+                .document(recipe.documentId)
+                .delete()
+                .addOnSuccessListener {
+                    recipeAdapter.removeRecipe(position)
+                    Toast.makeText(context, "Recipe deleted successfully", Toast.LENGTH_SHORT).show()
+                    updateUI()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Error deleting recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
 
     private fun navigateToRecipeResult(recipe: Recipe) {
         val recipeResultFragment = RecipeResultFragment().apply {

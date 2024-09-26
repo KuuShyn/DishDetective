@@ -1,5 +1,4 @@
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -17,11 +16,11 @@
             android:id="@+id/view_finder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
 
         <!-- FragmentContainerView: Make sure this is used for only fragments that should overlay the PreviewView -->
@@ -29,21 +28,21 @@
             android:id="@+id/fragment_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- OverlayView for custom drawing -->
         <com.thesis.dishdetective_xml.OverlayView
             android:id="@+id/overlay"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:translationZ="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:translationZ="5dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Inference Time TextView -->
         <TextView
@@ -52,20 +51,52 @@
             android:layout_height="wrap_content"
             android:layout_margin="32dp"
             android:textColor="@color/white"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="100ms" />
 
         <!-- Capture Button -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/captureButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/capture"
+            android:layout_height="60dp"
+            android:contentDescription="@string/capture"
+            android:paddingEnd="0dp"
+            android:paddingStart="0dp"
+            android:backgroundTint="@android:color/transparent"
+            style="?attr/materialIconButtonFilledStyle"
+            app:icon="@drawable/baseline_camera_24_green"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="48dp"
+            app:iconTint="@color/green"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/usePhotoButton"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/usePhotoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:contentDescription="@string/usePhoto"
+            android:paddingEnd="0dp"
+            android:paddingStart="0dp"
+            android:backgroundTint="@android:color/transparent"
+            style="?attr/materialIconButtonFilledStyle"
+            app:icon="@drawable/baseline_add_photo_alternate_48"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="48dp"
+            app:iconTint="@color/green"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/captureButton" />
         <!-- ToggleButton for GPU -->
         <ToggleButton
             android:id="@+id/isGpu"
@@ -73,8 +104,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="18dp"
-            android:background="@color/orange"
-            android:textColor="@color/white"
+            android:background="@color/yellow"
+            android:textColor="@color/black"
             android:textOff="@string/gpu"
             android:textOn="@string/gpu"
             app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +115,7 @@
     <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="250dp"
+        android:layout_width="180dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu" />

@@ -7,19 +7,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.thesis.dishdetective_xml.databinding.ItemRecipeBinding
-
-data class Recipe(
-    val dishName: String = "",
-    val servings: Int = 0,
-    val ingredients: List<String> = emptyList(),
-    val quantities: List<Double> = emptyList(),
-    val totalNutrition: Map<String, Double> = emptyMap(),
-    var documentId: String = ""
-)
+import com.thesis.dishdetective_xml.util.Debounce.setDebounceClickListener
 
 class RecipeAdapter(
     private val recipes: MutableList<Recipe>,
-    private val onItemClick: (Recipe, Int) -> Unit
+    private val onItemClick: (Recipe, Int) -> Unit,
+    private val onDeleteClick: (Recipe, Int) -> Unit
+
 ) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
     private var selectedPosition = RecyclerView.NO_POSITION
@@ -34,6 +28,10 @@ class RecipeAdapter(
             // Set the click listener
             binding.root.setOnClickListener {
                 onItemClick(recipe, adapterPosition)
+            }
+
+            binding.deleteButton.setDebounceClickListener() {
+                onDeleteClick(recipe, adapterPosition)
             }
 
             // Update background color based on selection
@@ -67,6 +65,7 @@ class RecipeAdapter(
         if (position < recipes.size) {
             recipes.removeAt(position)
             notifyItemRemoved(position)
+            notifyItemRangeChanged(position, recipes.size)
         }
     }
 

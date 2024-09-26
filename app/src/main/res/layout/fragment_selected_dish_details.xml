@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
+        app:layout_constraintBottom_toTopOf="@id/detailsButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,43 +19,47 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_marginTop="16dp">
 
-            <!-- Dish Icon -->
+            <!-- Image Section -->
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/dishIcon"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/ic_dish_icon" />
+                android:id="@+id/dish_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/img_placeholder"
+                android:clickable="false" />
 
-            <!-- Dish Name -->
-            <TextView
-                android:id="@+id/dishNameTextView"
+            <!-- Selected Dish Title -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/selectedDishTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="DISH NAME"
-                android:textColor="@color/purple_500"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:text="Selected Dish"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:gravity="center" />
 
-            <!-- Recipe Name -->
-            <TextView
-                android:id="@+id/recipeNameTextView"
+            <!-- Dish Name (Title) -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/dishName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:text="My Recipe"
-                android:textColor="@color/purple_500"
-                android:textSize="28sp"
-                android:textStyle="bold" />
+                android:text="Chicken Adobo"
+                android:textAppearance="?attr/textAppearanceHeadline4"
+                android:textColor="@color/blue"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:gravity="center_horizontal" />
 
             <!-- Horizontal layout for Nutrition and Ingredients -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <!-- Nutrition Section -->
@@ -187,10 +192,6 @@
                                 </LinearLayout>
                             </LinearLayout>
 
-
-                            <!-- Monounsaturated Fatty Acids Progress Section -->
-
-
                             <!-- Carbs Progress Section -->
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -322,37 +323,70 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Buttons at the bottom -->
-    <LinearLayout
-        android:id="@+id/buttonContainer"
-        android:layout_width="match_parent"
+    <!-- Details Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/detailsButton"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginBottom="8dp"
+        android:text="Details"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:backgroundTint="@color/green"
+        app:cornerRadius="12dp"
+        app:layout_constraintBottom_toTopOf="@id/recommendationSummaryCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Edit Recipe Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/editRecipeButton"
-            android:layout_width="wrap_content"
+    <!-- Recommendation Summary -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/recommendationSummaryCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/recommendationSummary"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Edit Recipe"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            app:backgroundTint="@color/purple_500" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-        <!-- Save Recipe Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/saveRecipeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/purple_500"
-            android:text="Save Recipe"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/recommendationSummaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Recommendations Summary"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                android:textColor="@android:color/white" />
 
-    </LinearLayout>
+            <!-- First Recommendation Icon (Calories Icon) -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/kcalIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Calories Icon"
+                android:src="@drawable/ic_kcal"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+
+            <!-- Second Recommendation Icon (Nutrients Icon) -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/nutrientsIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="Nutrients Icon"
+                android:src="@drawable/ic_iron"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

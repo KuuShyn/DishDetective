@@ -2,14 +2,20 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="white_two">#FAFAFA</color>
     <color name="bounding_box_color">#234567</color>
     <color name="gray">#999</color>
     <color name="orange">#F93</color>
     <color name="red">#FF0000</color>
-    <color name="green">#00c192</color>
+    <color name="green">#00a67c</color>
     <color name="yellow">#FFC801</color>
     <color name="purple_500">#6200EE</color>
-<!-- Default bounding box color -->
+    <color name="blue">#1e1d6d</color>
+    <color name="light_blue">#acdbf5</color>
+    <color name="brown">#ad8c65</color>
+    <color name="pink">#ff9b9b</color>
+    <color name="yellow_two">#ffe25c</color>
+    <!-- Default bounding box color -->
 
  !-- Default bounding box color -->
 

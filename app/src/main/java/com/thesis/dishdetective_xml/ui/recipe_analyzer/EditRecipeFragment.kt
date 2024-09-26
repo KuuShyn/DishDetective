@@ -66,6 +66,10 @@ class EditRecipeFragment : Fragment() {
             if (documentId != null) {
                 updateRecipe(documentId)
             }
+            else{
+                updateRecipe()
+
+            }
         }
 
         return view
@@ -166,7 +170,7 @@ class EditRecipeFragment : Fragment() {
         ingredientFields.add(Pair(ingredientLayout, quantityLayout))
     }
 
-    private fun updateRecipe(documentId: String) {
+    private fun updateRecipe(documentId: String? = null) {
         val dishName = dishNameText.text.toString()
         val servings = servingsText.text.toString().toIntOrNull() ?: 1
 

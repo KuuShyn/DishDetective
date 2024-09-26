@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
@@ -41,6 +42,7 @@ import com.thesis.dishdetective_xml.ui.capture.CapturedFragment
 import com.thesis.dishdetective_xml.ui.profile.ProfileDetailsFragment
 import com.thesis.dishdetective_xml.ui.recipe_analyzer.RecipeAnalyzerFragment
 import com.thesis.dishdetective_xml.ui.recipe_analyzer.RecipeHistoryFragment
+import com.thesis.dishdetective_xml.util.Debounce.setDebounceClickListener
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var pickPhotoLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,10 +97,34 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
         bindListeners()
         binding.isGpu.visibility = View.GONE
 
+        pickPhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                val uri = data?.data
+                uri?.let {
+                    val inputStream = contentResolver.openInputStream(it)
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    inputStream?.close()
 
+                    // Detect bounding boxes on the selected image
+                    detector?.detect(bitmap)
+
+                    // Draw bounding boxes on the bitmap
+                    val bitmapWithBoxes = drawBoundingBoxesOnBitmap(bitmap, binding.overlay.getBoundingBoxes())
+
+                    // Pass the image with bounding boxes to CapturedFragment
+                    val capturedFragment = CapturedFragment.newInstance(bitmapWithBoxes, binding.overlay.getBoundingBoxes())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, capturedFragment)
+                        .addToBackStack(null)
+                        .commit()
+
+                    stopCamera()
+                }
+            }
+        }
 
         binding.navView.setNavigationItemSelectedListener(this)
-
 
     }
 
@@ -111,6 +138,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
         binding.captureButton.visibility = View.VISIBLE
         binding.inferenceTime.visibility = View.VISIBLE
         binding.overlay.visibility = View.VISIBLE
+        binding.usePhotoButton.visibility = View.VISIBLE
     }
 
     private fun stopCamera() {
@@ -120,7 +148,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
         binding.inferenceTime.visibility = View.GONE
         binding.isGpu.visibility = View.GONE
         binding.overlay.visibility = View.GONE
-
+        binding.usePhotoButton.visibility = View.GONE
 
     }
 
@@ -142,8 +170,8 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
                 }
             }
 
-            captureButton.setOnClickListener {
-                val imageCapture = imageCapture ?: return@setOnClickListener
+            captureButton.setDebounceClickListener {
+                val imageCapture = imageCapture ?: return@setDebounceClickListener
                 imageCapture.takePicture(
                     ContextCompat.getMainExecutor(this@MainActivity),
                     object : ImageCapture.OnImageCapturedCallback() {
@@ -164,10 +192,16 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
                             detector?.detect(rotatedBitmap)
 
-                            val bitmapWithBoxes = drawBoundingBoxesOnBitmap(bitmap, binding.overlay.getBoundingBoxes())
+                            val bitmapWithBoxes = drawBoundingBoxesOnBitmap(
+                                bitmap,
+                                binding.overlay.getBoundingBoxes()
+                            )
 
                             // Pass the image and adjusted bounding boxes to CapturedFragment
-                            val capturedFragment = CapturedFragment.newInstance(bitmapWithBoxes, binding.overlay.getBoundingBoxes())
+                            val capturedFragment = CapturedFragment.newInstance(
+                                bitmapWithBoxes,
+                                binding.overlay.getBoundingBoxes()
+                            )
                             supportFragmentManager.beginTransaction()
                                 .replace(R.id.fragment_container, capturedFragment)
                                 .addToBackStack(null)
@@ -186,10 +220,23 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
                     }
                 )
             }
+
+            usePhotoButton.setDebounceClickListener {
+                val intent = Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                )
+                pickPhotoLauncher.launch(intent)
+            }
+
+
         }
     }
 
-    private fun drawBoundingBoxesOnBitmap(bitmap: Bitmap?, boundingBoxes: List<BoundingBox>): Bitmap {
+    private fun drawBoundingBoxesOnBitmap(
+        bitmap: Bitmap?,
+        boundingBoxes: List<BoundingBox>
+    ): Bitmap {
         if (bitmap == null) return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
         val bitmapCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(bitmapCopy)
@@ -279,18 +326,17 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
             }
 
             R.id.nav_signout -> {
+                stopCamera() // Stop the camera when signing out
                 firebaseAuth.signOut()
                 val intent = Intent(this, SignInActivity::class.java)
                 startActivity(intent)
                 finish()
-                return true
             }
         }
 
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
-
 
 
     private fun fetchFoodData() {
@@ -318,24 +364,24 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-            preview = Preview.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(rotation)
-                .build()
+        preview = Preview.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .setTargetRotation(rotation)
+            .build()
 
-            // Set up ImageCapture with appropriate settings
-            imageCapture = ImageCapture.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setTargetRotation(rotation)
-                .setFlashMode(FLASH_MODE_OFF) // Set flash mode if needed
-                .build()
+        // Set up ImageCapture with appropriate settings
+        imageCapture = ImageCapture.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .setTargetRotation(rotation)
+            .setFlashMode(FLASH_MODE_OFF) // Set flash mode if needed
+            .build()
 
-            imageAnalyzer = ImageAnalysis.Builder()
-                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .setTargetRotation(rotation)
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                .build()
+        imageAnalyzer = ImageAnalysis.Builder()
+            .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setTargetRotation(rotation)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .build()
 
         imageAnalyzer?.setAnalyzer(cameraExecutor) { imageProxy ->
             val bitmapBuffer =
@@ -438,7 +484,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
     override fun onDetect(boundingBoxes: List<BoundingBox>, inferenceTime: Long) {
         runOnUiThread {
-            binding.inferenceTime.text = "${inferenceTime}ms"
+            "${inferenceTime}ms".also { binding.inferenceTime.text = it }
             binding.overlay.apply {
                 setResults(boundingBoxes)
                 invalidate()

@@ -1,4 +1,4 @@
-// File: SelectedDishFragment.kt
+// File: SelectedDishDetailsFragment.kt
 package com.thesis.dishdetective_xml.ui.details
 
 import android.os.Bundle
