@@ -15,8 +15,16 @@
     <color name="brown">#ad8c65</color>
     <color name="pink">#ff9b9b</color>
     <color name="yellow_two">#ffe25c</color>
-    <!-- Default bounding box color -->
+    <color name="gray_white">#f4f2f2</color>
 
- !-- Default bounding box color -->
+    <color name="red_details">#bf4848</color>
+    <color name="red_background">#f4c3c3</color>
+
+    <color name="green_background">#b8efc3</color>
+    <color name="green_details">#388951</color>
+
+    <color name="yellow_background">#fff9da</color>
+    <color name="yellow_details">#dfb174</color>
+    <!-- Default bounding box color -->
 
 </resources>

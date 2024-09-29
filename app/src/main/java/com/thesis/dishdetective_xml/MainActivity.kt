@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
                         .commit()
 
                     stopCamera()
+                    binding.usePhotoButton.isEnabled = true
                 }
             }
         }
@@ -154,23 +155,9 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
     private fun bindListeners() {
         binding.apply {
-            isGpu.setOnCheckedChangeListener { buttonView, isChecked ->
-                cameraExecutor.submit {
-                    detector?.restart(isGpu = isChecked)
-                }
-                if (isChecked) {
-                    buttonView.setBackgroundColor(
-                        ContextCompat.getColor(
-                            baseContext,
-                            R.color.orange
-                        )
-                    )
-                } else {
-                    buttonView.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.gray))
-                }
-            }
-
             captureButton.setDebounceClickListener {
+                captureButton.isEnabled = false // Disable the button
+
                 val imageCapture = imageCapture ?: return@setDebounceClickListener
                 imageCapture.takePicture(
                     ContextCompat.getMainExecutor(this@MainActivity),
@@ -210,26 +197,27 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
                             // Close imageProxy after processing
                             imageProxy.close()
                             stopCamera()
+                            captureButton.isEnabled = true // Re-enable the button
                         }
-
 
                         override fun onError(exception: ImageCaptureException) {
                             Log.e(TAG, "Image capture failed: ${exception.message}", exception)
                             Toast.makeText(baseContext, "Capture failed", Toast.LENGTH_SHORT).show()
+                            captureButton.isEnabled = true // Re-enable the button
                         }
                     }
                 )
             }
 
             usePhotoButton.setDebounceClickListener {
+                usePhotoButton.isEnabled = false // Disable the button
+
                 val intent = Intent(
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 )
                 pickPhotoLauncher.launch(intent)
             }
-
-
         }
     }
 
@@ -345,6 +333,17 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
             onComplete = { foodList ->
                 Log.d("Firebase RDB Cache", "Total food items: ${foodList.size}")
                 // Handle the retrieved food list here
+            },
+            onError = { errorMessage ->
+                Log.e("Firebase Error", errorMessage)
+                // Show a user-friendly error message (e.g., Toast)
+            }
+        )
+
+        FoodRepository.fetchAllDishes(
+            onComplete = { dishList ->
+                Log.d("Firebase RDB Cache", "Total dish items: ${dishList.size}")
+                // Handle the retrieved dish list here
             },
             onError = { errorMessage ->
                 Log.e("Firebase Error", errorMessage)
@@ -491,5 +490,4 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
             }
         }
     }
-
 }

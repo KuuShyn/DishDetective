@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.thesis.dishdetective_xml.R
 import com.thesis.dishdetective_xml.FoodRepository
+import com.thesis.dishdetective_xml.util.FirebaseUtil
 import java.util.Locale
 
 
@@ -35,8 +36,8 @@ class RecipeResultFragment : Fragment() {
     private lateinit var carbsProgressBar: LinearProgressIndicator
     private lateinit var fiberProgressBar: LinearProgressIndicator
 
-    private lateinit var db: FirebaseFirestore
-    private lateinit var firebaseAuth: FirebaseAuth
+    private val db by lazy { FirebaseUtil.firestore }
+    private val firebaseAuth by lazy { FirebaseUtil.firebaseAuth }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,9 +58,6 @@ class RecipeResultFragment : Fragment() {
         ingredientContainer = view.findViewById(R.id.IngredientContainer)
         editRecipeButton = view.findViewById(R.id.editRecipeButton)
         saveRecipeButton = view.findViewById(R.id.saveRecipeButton)
-
-        db = FirebaseFirestore.getInstance()
-        firebaseAuth = FirebaseAuth.getInstance()
 
         // Get the data from the Bundle
         val dishName = arguments?.getString("dishName")
@@ -115,7 +113,6 @@ class RecipeResultFragment : Fragment() {
                     if (documentId != null) {
                         putString("documentId", documentId)
                     }
-
                 }
             }
 

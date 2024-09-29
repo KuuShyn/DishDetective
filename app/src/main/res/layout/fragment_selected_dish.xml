@@ -66,6 +66,11 @@
         android:textColor="#bf4848"
         android:textSize="28sp"
         android:textStyle="bold"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:background="@drawable/rounded_background"
         app:layout_constraintTop_toBottomOf="@id/caloriesPerServing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -150,7 +155,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            >
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/recommendationSummaryText"
@@ -169,7 +176,7 @@
                 android:layout_marginEnd="16dp"
                 android:contentDescription="Calories Icon"
                 android:src="@drawable/ic_kcal"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+                />
 
             <!-- Second Recommendation Icon (Nutrients Icon) -->
             <com.google.android.material.imageview.ShapeableImageView
@@ -178,7 +185,7 @@
                 android:layout_height="50dp"
                 android:contentDescription="Nutrients Icon"
                 android:src="@drawable/ic_iron"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+                 />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

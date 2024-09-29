@@ -375,7 +375,7 @@
                 android:layout_marginEnd="16dp"
                 android:contentDescription="Calories Icon"
                 android:src="@drawable/ic_kcal"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+                 />
 
             <!-- Second Recommendation Icon (Nutrients Icon) -->
             <com.google.android.material.imageview.ShapeableImageView
@@ -384,7 +384,7 @@
                 android:layout_height="50dp"
                 android:contentDescription="Nutrients Icon"
                 android:src="@drawable/ic_iron"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance_MaterialComponents_MediumComponent" />
+                 />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

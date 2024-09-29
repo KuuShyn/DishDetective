@@ -41,5 +41,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="usePhoto">Use Photo from your Files</string>
+    <string name="show_sodium_ncholesterol_levels">show sodium&amp;\nndcholesterol levels</string>
 
 </resources>

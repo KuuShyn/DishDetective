@@ -1,152 +1,203 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:fillViewport="true">
 
-    <!-- Profile Header -->
-    <TextView
-        android:id="@+id/profileHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#00b389"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="36dp"/>
-
-    <!-- User Name -->
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alex Johnson"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#1E1E1E"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"/>
-
-    <!-- Calories Per Day Box -->
-    <TextView
-        android:id="@+id/caloriesTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CALORIES PER DAY"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="#B0B0B0"
-        android:gravity="center"
-        android:layout_marginTop="28dp" />
-
-    <TextView
-        android:id="@+id/caloriesValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="1700"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        android:textColor="#00b389"
-        android:gravity="center"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/gray_box"
-        android:padding="20dp" />
-
-    <!-- Goal Title -->
-    <TextView
-        android:id="@+id/goalTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GOAL"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="#B0B0B0"
-        android:layout_marginTop="28dp" />
-
-    <!-- Goal Value -->
-    <TextView
-        android:id="@+id/goalValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lose 1lb per week"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#1E1E1E"
-        android:layout_marginTop="12dp" />
-
-    <!-- Iron Intake Title -->
-    <TextView
-        android:id="@+id/ironIntakeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="IRON INTAKE PER DAY"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="#B0B0B0"
-        android:layout_marginTop="28dp" />
-
-    <!-- Iron Intake Value -->
-    <TextView
-        android:id="@+id/ironIntakeValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="18 mg"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#00b389"
-        android:layout_marginTop="12dp" />
-
-    <!-- User Summary -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/gray_box"
-        android:padding="20dp"
-        android:layout_marginTop="28dp">
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
+        <!-- Profile Header -->
         <TextView
-            android:id="@+id/userSummary"
+            android:id="@+id/profileHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Summary"
-            android:textSize="18sp"
+            android:text="Profile"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="#1E1E1E"
+            android:textColor="#00b389"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="36dp"
             android:layout_marginBottom="12dp" />
 
+        <!-- User Name -->
         <TextView
-            android:id="@+id/summaryDetails"
+            android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name: Alex Johnson\nAge: 29\nGender: Male\nHeight: 175 cm\nWeight: 70 kg"
-            android:textSize="18sp"
-            android:textColor="#555555" />
+            android:text="Alex Johnson"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1E1E1E"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Calories Per Day Box -->
+        <TextView
+            android:id="@+id/caloriesTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CALORIES PER DAY"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#B0B0B0"
+            android:gravity="center"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/caloriesValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1700 kcal"
+            android:textSize="38sp"
+            android:textStyle="bold"
+            android:textColor="#00b389"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gray_box"
+            android:padding="20dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- BMI Section -->
+        <TextView
+            android:id="@+id/bmiTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BMI"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#B0B0B0"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/bmiValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Overweight"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#bf4848"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Ideal Body Weight Section -->
+        <TextView
+            android:id="@+id/idealWeightTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IDEAL BODY WEIGHT"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#B0B0B0"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/idealWeightValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="68 kg"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2a2a72"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Intake Section Container -->
+        <LinearLayout
+            android:id="@+id/intakeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="28dp" />
+
+        <!-- User Summary -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/gray_box"
+            android:padding="20dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/userSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Summary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#1E1E1E"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/ageValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age: 29"
+                android:textSize="18sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/genderValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gender: Male"
+                android:textSize="18sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/heightValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Height: 175 cm"
+                android:textSize="18sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/weightValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weight: 70 kg"
+                android:textSize="18sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/modeValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode: Lose weight"
+                android:textSize="18sp"
+                android:textColor="#555555"
+                android:layout_marginBottom="6dp" />
+        </LinearLayout>
+
+        <!-- Edit Profile Button -->
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:backgroundTint="#2a2a72"
+            android:textColor="#FFFFFF"
+            android:padding="20dp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp" />
+
     </LinearLayout>
 
-    <!-- Add a spacer to push the button to the bottom -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Edit Profile Button -->
-    <Button
-        android:id="@+id/editProfileButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Edit Profile"
-        android:backgroundTint="#2a2a72"
-        android:textColor="#FFFFFF"
-        android:padding="20dp"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal" />
-
-</LinearLayout>
+</ScrollView>

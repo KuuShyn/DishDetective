@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.RadioButton
 import androidx.fragment.app.Fragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
@@ -23,13 +24,13 @@ class ProfileInputFragment : Fragment() {
     private lateinit var weightInput: TextInputEditText
     private lateinit var heightFeetInput: TextInputEditText
     private lateinit var heightInchesInput: TextInputEditText
-    private lateinit var weightGoalInput: TextInputEditText
-    private lateinit var weightChangePerWeekInput: TextInputEditText
     private lateinit var anemiaSwitch: SwitchMaterial
-    private lateinit var osteoporosisSwitch: SwitchMaterial
+    private lateinit var cardioSwitch: SwitchMaterial
     private lateinit var saveButton: Button
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var genderMale: RadioButton
+    private lateinit var genderFemale: RadioButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,11 +47,11 @@ class ProfileInputFragment : Fragment() {
         weightInput = view.findViewById(R.id.weightInput)
         heightFeetInput = view.findViewById(R.id.heightFeetInput)
         heightInchesInput = view.findViewById(R.id.heightInchesInput)
-        weightGoalInput = view.findViewById(R.id.weightGoalInput)
-        weightChangePerWeekInput = view.findViewById(R.id.weightChangePerWeekInput)
         anemiaSwitch = view.findViewById(R.id.anemiaSwitch)
-        osteoporosisSwitch = view.findViewById(R.id.osteoporosisSwitch)
+        cardioSwitch = view.findViewById(R.id.cardioSwitch)
         saveButton = view.findViewById(R.id.saveButton)
+        genderMale = view.findViewById(R.id.genderMale)
+        genderFemale = view.findViewById(R.id.genderFemale)
 
         // Retrieve the arguments
         val email = arguments?.getString("email")
@@ -83,13 +84,11 @@ class ProfileInputFragment : Fragment() {
         val weight = weightInput.text.toString().toFloatOrNull()
         val heightFeet = heightFeetInput.text.toString().toIntOrNull()
         val heightInches = heightInchesInput.text.toString().toIntOrNull()
-        val weightGoal = weightGoalInput.text.toString()
-        val weightChangePerWeek = weightChangePerWeekInput.text.toString().toFloatOrNull()
         val isAnemiaChecked = anemiaSwitch.isChecked
-        val isOsteoporosisChecked = osteoporosisSwitch.isChecked
+        val isCardioChecked = cardioSwitch.isChecked
+        val gender = if (genderMale.isChecked) "male" else if (genderFemale.isChecked) "female" else ""
 
         val userId = firebaseAuth.uid ?: return
-
 
         val profileData = hashMapOf(
             "name" to name,
@@ -97,13 +96,12 @@ class ProfileInputFragment : Fragment() {
             "weight" to weight,
             "heightFeet" to heightFeet,
             "heightInches" to heightInches,
-            "weightGoal" to weightGoal,
-            "weightChangePerWeek" to weightChangePerWeek,
             "isAnemiaChecked" to isAnemiaChecked,
-            "isOsteoporosisChecked" to isOsteoporosisChecked
+            "isCardioChecked" to isCardioChecked,
+            "gender" to gender
         )
 
-        firestore.collection("users").document(userId.toString())
+        firestore.collection("users").document(userId)
             .collection("profile")
             .add(profileData)
             .addOnSuccessListener {
