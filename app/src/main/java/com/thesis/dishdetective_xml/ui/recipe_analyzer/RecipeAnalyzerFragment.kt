@@ -132,7 +132,9 @@ class RecipeAnalyzerFragment : Fragment() {
             isValid = false
         }
 
-        if (servingsInput.text.isNullOrBlank() || servingsInput.text.toString().toIntOrNull() == null) {
+        if (servingsInput.text.isNullOrBlank() || servingsInput.text.toString()
+                .toIntOrNull() == null
+        ) {
             servingsInput.error = "Enter a valid number of servings"
             isValid = false
         }
@@ -167,12 +169,14 @@ class RecipeAnalyzerFragment : Fragment() {
             )
             setPadding(0, 0, 8, 0)
             hintTextColor = ContextCompat.getColorStateList(requireContext(), R.color.black)
+            boxStrokeColor = ContextCompat.getColor(requireContext(), R.color.green)
         }
 
         // Ingredient AutoCompleteTextView
         val ingredientAutoCompleteTextView = MaterialAutoCompleteTextView(
             ContextThemeWrapper(
                 requireContext(),
+
                 R.style.LoginTextInputInnerFieldStyle
             )
         ).apply {
@@ -182,6 +186,7 @@ class RecipeAnalyzerFragment : Fragment() {
             )
             setPadding(18.dpToPx(requireContext()), 0, 0, 0)
             hint = "e.g., Tomatoes"
+
 
         }
 
@@ -208,6 +213,8 @@ class RecipeAnalyzerFragment : Fragment() {
                     marginStart = 8.dpToPx(requireContext())
                 }
             hintTextColor = ContextCompat.getColorStateList(requireContext(), R.color.black)
+            boxStrokeColor = ContextCompat.getColor(requireContext(), R.color.green)
+
         }
 
         val quantityInput = TextInputEditText(

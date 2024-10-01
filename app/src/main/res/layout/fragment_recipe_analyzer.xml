@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:hint="e.g., Spaghetti Bolognese"
                 app:boxStrokeColor="@color/green"
-                app:hintTextColor="@color/green" />
+                app:hintTextColor="@color/black" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Servings -->
@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/green"
-            app:hintTextColor="@color/green"
+            app:hintTextColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editServingsTextView">
@@ -70,7 +70,7 @@
                 android:hint="e.g., 4"
                 android:inputType="number"
                 app:boxStrokeColor="@color/green"
-                app:hintTextColor="@color/green" />
+                app:hintTextColor="@color/black" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- com.thesis.dishdetective_xml.ui.recipe_analyzer.Recipe Title -->
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:boxStrokeColor="@color/green"
-                app:hintTextColor="@color/green">
+                app:hintTextColor="@color/black">
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     style="@style/LoginTextInputInnerFieldStyle"
@@ -146,7 +146,7 @@
                     android:hint="e.g., Tomatoes"
                     android:paddingStart="18dp"
                     app:boxStrokeColor="@color/green"
-                    app:hintTextColor="@color/green" />
+                    app:hintTextColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -157,7 +157,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 app:boxStrokeColor="@color/green"
-                app:hintTextColor="@color/green">
+                app:hintTextColor="@color/black">
 
                 <com.google.android.material.textfield.TextInputEditText
                     style="@style/LoginTextInputInnerFieldStyle"
@@ -166,7 +166,7 @@
                     android:hint="e.g., 25"
                     android:inputType="numberDecimal"
                     app:boxStrokeColor="@color/green"
-                    app:hintTextColor="@color/green" />
+                    app:hintTextColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>

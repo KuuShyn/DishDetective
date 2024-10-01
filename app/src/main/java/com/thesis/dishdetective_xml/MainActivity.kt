@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -43,6 +44,9 @@ import com.thesis.dishdetective_xml.ui.profile.ProfileDetailsFragment
 import com.thesis.dishdetective_xml.ui.recipe_analyzer.RecipeAnalyzerFragment
 import com.thesis.dishdetective_xml.ui.recipe_analyzer.RecipeHistoryFragment
 import com.thesis.dishdetective_xml.util.Debounce.setDebounceClickListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -72,7 +76,9 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-        fetchFoodData()
+        lifecycleScope.launch {
+            fetchData()
+        }
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         cameraExecutor.execute {
@@ -97,33 +103,38 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
         bindListeners()
         binding.isGpu.visibility = View.GONE
 
-        pickPhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data: Intent? = result.data
-                val uri = data?.data
-                uri?.let {
-                    val inputStream = contentResolver.openInputStream(it)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    inputStream?.close()
+        pickPhotoLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == RESULT_OK) {
+                    val data: Intent? = result.data
+                    val uri = data?.data
+                    uri?.let {
+                        val inputStream = contentResolver.openInputStream(it)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        inputStream?.close()
 
-                    // Detect bounding boxes on the selected image
-                    detector?.detect(bitmap)
+                        // Detect bounding boxes on the selected image
+                        detector?.detect(bitmap)
 
-                    // Draw bounding boxes on the bitmap
-                    val bitmapWithBoxes = drawBoundingBoxesOnBitmap(bitmap, binding.overlay.getBoundingBoxes())
+                        // Draw bounding boxes on the bitmap
+                        val bitmapWithBoxes =
+                            drawBoundingBoxesOnBitmap(bitmap, binding.overlay.getBoundingBoxes())
 
-                    // Pass the image with bounding boxes to CapturedFragment
-                    val capturedFragment = CapturedFragment.newInstance(bitmapWithBoxes, binding.overlay.getBoundingBoxes())
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, capturedFragment)
-                        .addToBackStack(null)
-                        .commit()
+                        // Pass the image with bounding boxes to CapturedFragment
+                        val capturedFragment = CapturedFragment.newInstance(
+                            bitmapWithBoxes,
+                            binding.overlay.getBoundingBoxes()
+                        )
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, capturedFragment)
+                            .addToBackStack(null)
+                            .commit()
 
-                    stopCamera()
-                    binding.usePhotoButton.isEnabled = true
+                        stopCamera()
+                        binding.usePhotoButton.isEnabled = true
+                    }
                 }
             }
-        }
 
         binding.navView.setNavigationItemSelectedListener(this)
 
@@ -278,6 +289,9 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 
+
+
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
@@ -327,30 +341,53 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
     }
 
 
-    private fun fetchFoodData() {
+    private suspend fun fetchData() {
+        var profileFetched = false
+        var dishesFetched = false
+
+        ProfileRec.fetchProfileData(
+            onComplete = {
+                Log.d("ProfileRec", "Profile data fetched successfully")
+                profileFetched = true
+
+                // Check if both profile and dishes are fetched
+                if (profileFetched && dishesFetched) {
+                    RecommendationSystem.getRecommendations()
+                }
+            },
+            onError = { errorMessage ->
+                Log.e("ProfileRec", "Error fetching profiles: $errorMessage")
+            }
+        )
+
 
         FoodRepository.fetchAllFoods(
             onComplete = { foodList ->
                 Log.d("Firebase RDB Cache", "Total food items: ${foodList.size}")
-                // Handle the retrieved food list here
             },
             onError = { errorMessage ->
                 Log.e("Firebase Error", errorMessage)
-                // Show a user-friendly error message (e.g., Toast)
             }
         )
 
         FoodRepository.fetchAllDishes(
             onComplete = { dishList ->
-                Log.d("Firebase RDB Cache", "Total dish items: ${dishList.size}")
-                // Handle the retrieved dish list here
+                Log.d("FoodRepository", "Dishes fetched successfully")
+                dishesFetched = true
+
+                // Check if both profile and dishes are fetched
+                if (profileFetched && dishesFetched) {
+                    RecommendationSystem.getRecommendations()
+                }
             },
             onError = { errorMessage ->
-                Log.e("Firebase Error", errorMessage)
-                // Show a user-friendly error message (e.g., Toast)
+                Log.e("FoodRepository", "Error fetching dishes: $errorMessage")
             }
         )
+
+
     }
+
 
     private fun bindCameraUseCases() {
         val cameraProvider =

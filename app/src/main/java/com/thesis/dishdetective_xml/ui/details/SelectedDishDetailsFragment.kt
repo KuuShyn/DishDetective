@@ -1,174 +1,109 @@
 package com.thesis.dishdetective_xml.ui.details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.thesis.dishdetective_xml.FoodRepository
 import com.thesis.dishdetective_xml.R
-import com.thesis.dishdetective_xml.ui.recipe_analyzer.EditRecipeFragment
-import com.thesis.dishdetective_xml.util.FirebaseUtil
-import java.util.Locale
 
 class SelectedDishDetailsFragment : Fragment() {
 
-    private lateinit var dishNameTextView: TextView
-    private lateinit var caloriesTextView: TextView
-    private lateinit var proteinsValue: TextView
-    private lateinit var fatValue: TextView
-    private lateinit var carbsValue: TextView
-    private lateinit var fiberValue: TextView
-    private lateinit var ingredientContainer: LinearLayout
-    private lateinit var proteinProgressBar: LinearProgressIndicator
-    private lateinit var fatProgressBar: LinearProgressIndicator
-    private lateinit var carbsProgressBar: LinearProgressIndicator
-    private lateinit var fiberProgressBar: LinearProgressIndicator
+    companion object {
+        private const val ARG_FOOD_NAME = "food_name"
+        private const val ARG_CALORIES = "calories"
+        private const val ARG_PROTEINS = "proteins"
+        private const val ARG_FATS = "fats"
+        private const val ARG_CARBS = "carbs"
+        private const val ARG_FIBER = "fiber"
+        private const val ARG_INGREDIENTS = "ingredients"
+
+        fun newInstance(
+            foodName: String,
+            calories: String,
+            proteins: String,
+            fats: String,
+            carbs: String,
+            fiber: String,
+            ingredients: List<String>
+        ): SelectedDishDetailsFragment {
+            val fragment = SelectedDishDetailsFragment()
+            val args = Bundle().apply {
+                putString(ARG_FOOD_NAME, foodName)
+                putString(ARG_CALORIES, calories)
+                putString(ARG_PROTEINS, proteins)
+                putString(ARG_FATS, fats)
+                putString(ARG_CARBS, carbs)
+                putString(ARG_FIBER, fiber)
+                putStringArrayList(ARG_INGREDIENTS, ArrayList(ingredients))
+            }
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private var foodName: String? = null
+    private var calories: String? = null
+    private var proteins: String? = null
+    private var fats: String? = null
+    private var carbs: String? = null
+    private var fiber: String? = null
+    private var ingredients: List<String>? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            foodName = it.getString(ARG_FOOD_NAME)
+            calories = it.getString(ARG_CALORIES)
+            proteins = it.getString(ARG_PROTEINS)
+            fats = it.getString(ARG_FATS)
+            carbs = it.getString(ARG_CARBS)
+            fiber = it.getString(ARG_FIBER)
+            ingredients = it.getStringArrayList(ARG_INGREDIENTS)
+        }
+    }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_recipe_result, container, false)
-        // Inflate the layout for this fragment
-        dishNameTextView = view.findViewById(R.id.dishNameTextView)
-        caloriesTextView = view.findViewById(R.id.caloriesTextView)
-        proteinsValue = view.findViewById(R.id.proteinValue)
-        fatValue = view.findViewById(R.id.fatValue)
-        carbsValue = view.findViewById(R.id.carbsValue)
-        fiberValue = view.findViewById(R.id.fiberValue)
-        proteinProgressBar = view.findViewById(R.id.proteinProgress)
-        fatProgressBar = view.findViewById(R.id.fatProgress)
-        carbsProgressBar = view.findViewById(R.id.carbsProgress)
-        fiberProgressBar = view.findViewById(R.id.fiberProgress)
-        ingredientContainer = view.findViewById(R.id.IngredientContainer)
+        return inflater.inflate(R.layout.fragment_selected_dish_details, container, false)
+    }
 
-        // Get the data from the Bundle
-        val dishName = arguments?.getString("dishName")
-        val servings = arguments?.getString("servings")?.toIntOrNull() ?: 1
-        val ingredients = arguments?.getStringArrayList("ingredients") ?: arrayListOf()
-        val quantities =
-            arguments?.getStringArrayList("quantities")?.map { it.toDoubleOrNull() ?: 100.0 }
-                ?: List(ingredients.size) { 100.0 }
-        val documentId = arguments?.getString("documentId")
-        // Log received data
-        Log.d("RecipeResultFragment", "Dish Name: $dishName")
-        Log.d("RecipeResultFragment", "Servings: $servings")
-        Log.d("RecipeResultFragment", "Ingredients: $ingredients")
-        Log.d("RecipeResultFragment", "Quantities: $quantities")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // Calculate total nutrition
-        val totalNutrition = calculateTotalNutrition(ingredients, servings, quantities)
+        val dishNameTextView = view.findViewById<TextView>(R.id.dishNameTextView)
+        val caloriesTextView = view.findViewById<TextView>(R.id.caloriesTextView)
+        val proteinsTextView = view.findViewById<TextView>(R.id.proteinValue)
+        val fatsTextView = view.findViewById<TextView>(R.id.fatValue)
+        val carbsTextView = view.findViewById<TextView>(R.id.carbsValue)
+        val fiberTextView = view.findViewById<TextView>(R.id.fiberValue)
+        val ingredientContainer = view.findViewById<LinearLayout>(R.id.IngredientContainer)
+        val backButton = view.findViewById<MaterialButton>(R.id.detailsButton)
 
-        // Log calculated nutrition
-        Log.d("RecipeResultFragment", "Total Nutrition: $totalNutrition")
+        // Display the dish details
+        dishNameTextView?.text = foodName
+        caloriesTextView?.text = calories
+        proteinsTextView?.text = proteins
+        fatsTextView?.text = fats
+        carbsTextView?.text = carbs
+        fiberTextView?.text = fiber
 
-        // Display total nutrition
-        dishNameTextView.text = "Dish: $dishName"
-        caloriesTextView.text = "${totalNutrition["Calories"]} cal"
-        proteinsValue.text = "${totalNutrition["Protein"]} g"
-        fatValue.text = "${totalNutrition["Total_Fat"]} g"
-        carbsValue.text = "${totalNutrition["Carbohydrate_total"]} g"
-        fiberValue.text = "${totalNutrition["Fiber_total_dietary"]} g"
+        backButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
-        proteinProgressBar.progress = totalNutrition["Protein"]?.toInt() ?: 0
-        fatProgressBar.progress = totalNutrition["Total_Fat"]?.toInt() ?: 0
-        carbsProgressBar.progress = totalNutrition["Carbohydrate_total"]?.toInt() ?: 0
-        fiberProgressBar.progress = totalNutrition["Fiber_total_dietary"]?.toInt() ?: 0
-
-        // Display ingredients and quantities
-        ingredients.forEachIndexed { index, ingredient ->
-            val quantity = quantities.getOrNull(index) ?: 100.0
+        // Add ingredients dynamically
+        ingredients?.forEach { ingredient ->
             val ingredientTextView = TextView(context).apply {
-                text = "$ingredient: $quantity g"
+                text = ingredient
                 textSize = 16f
                 setPadding(0, 8, 0, 8)
             }
             ingredientContainer.addView(ingredientTextView)
         }
-
-        return view
     }
-
-    private fun calculateTotalNutrition(
-        ingredients: List<String>,
-        servings: Int,
-        quantities: List<Double>
-    ): Map<String, Double> {
-        val totalNutrition = mutableMapOf(
-            "Calories" to 0.0,
-            "Protein" to 0.0,
-            "Total_Fat" to 0.0,
-            "Carbohydrate_total" to 0.0,
-            "Fiber_total_dietary" to 0.0
-        )
-
-        val foodList = FoodRepository.foodList
-
-        // Step 1: Calculate the total weight of the recipe
-        val totalWeight = quantities.sum() // Add up all the ingredient weights
-
-        ingredients.forEachIndexed { index, ingredient ->
-            val food = foodList.find {
-                it.Food_Name_and_Description.toString().equals(ingredient, ignoreCase = true)
-            }
-            val quantity =
-                quantities.getOrNull(index) ?: 100.0 // Default to 100g if no quantity provided
-
-            food?.let {
-                // Nutrient values are for 100g, adjust for actual quantity
-                val quantityRatio = quantity / 100.0
-
-                totalNutrition["Calories"] = (totalNutrition["Calories"] ?: 0.0) +
-                        (parseToDouble(it.Energy_calculated) * quantityRatio)
-                totalNutrition["Protein"] = (totalNutrition["Protein"] ?: 0.0) +
-                        (parseToDouble(it.Protein) * quantityRatio)
-                totalNutrition["Total_Fat"] = (totalNutrition["Total_Fat"] ?: 0.0) +
-                        (parseToDouble(it.Total_Fat) * quantityRatio)
-                totalNutrition["Carbohydrate_total"] =
-                    (totalNutrition["Carbohydrate_total"] ?: 0.0) +
-                            (parseToDouble(it.Carbohydrate_total) * quantityRatio)
-                totalNutrition["Fiber_total_dietary"] =
-                    (totalNutrition["Fiber_total_dietary"] ?: 0.0) +
-                            (parseToDouble(it.Fiber_total_dietary) * quantityRatio)
-            }
-        }
-
-        // Step 2: Adjust values per serving
-        totalNutrition.keys.forEach { key ->
-            totalNutrition[key] = (totalNutrition[key] ?: 0.0) / servings
-        }
-        totalNutrition.keys.forEach { key ->
-            totalNutrition[key] = String.format(Locale.US, "%.2f", totalNutrition[key]).toDouble()
-        }
-
-        Log.d(
-            "RecipeResultFragment",
-            "Total Weight of com.thesis.dishdetective_xml.ui.recipe_analyzer.Recipe: $totalWeight g"
-        )
-
-        return totalNutrition
-    }
-
-    private fun parseToDouble(value: Any): Double {
-        return when (value) {
-            is String -> {
-                value.toDoubleOrNull() ?: 0.0
-            }
-
-            is Number -> {
-                value.toDouble()
-            }
-
-            else -> 0.0
-        }
-    }
-
-
 }

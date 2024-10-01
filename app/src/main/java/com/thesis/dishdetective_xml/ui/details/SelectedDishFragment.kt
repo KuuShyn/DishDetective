@@ -1,118 +1,231 @@
-// File: SelectedDishFragment.kt
 package com.thesis.dishdetective_xml.ui.details
 
-import android.graphics.drawable.GradientDrawable
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
+import com.thesis.dishdetective_xml.FoodRepository
+import com.thesis.dishdetective_xml.ProfileRec
 import com.thesis.dishdetective_xml.R
-import com.thesis.dishdetective_xml.databinding.FragmentSelectedDishBinding
+import com.thesis.dishdetective_xml.RecommendationSystem
 
 class SelectedDishFragment : Fragment() {
-    private var _binding: FragmentSelectedDishBinding? = null
-    private val binding get() = _binding!!
+
+    companion object {
+        private const val ARG_FOOD_NAME = "food_name"
+        private const val ARG_CROPPED_BITMAP = "cropped_bitmap"
+
+
+        fun newInstance(
+            foodName: String,
+            croppedBitmap: Bitmap,
+
+            ): SelectedDishFragment {
+            val fragment = SelectedDishFragment()
+            val args = Bundle().apply {
+                putString(ARG_FOOD_NAME, foodName)
+                putParcelable(ARG_CROPPED_BITMAP, croppedBitmap)
+
+            }
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private var foodName: String? = null
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            foodName = it.getString(ARG_FOOD_NAME)
+
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentSelectedDishBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        return inflater.inflate(R.layout.fragment_selected_dish, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Get the arguments
-        val food = arguments?.getString(ARG_FOOD)
-        val imageResId = arguments?.getInt(ARG_IMAGE_RES_ID)
-        val caloriesPerServing = arguments?.getString(ARG_CALORIES_PER_SERVING)
-        val ironIntakePerServing = arguments?.getString(ARG_IRON_INTAKE_PER_SERVING)
+        val croppedBitmap = arguments?.getParcelable<Bitmap>(ARG_CROPPED_BITMAP)
+        val foodName = arguments?.getString(ARG_FOOD_NAME)
 
-        val caloriesReason = arguments?.getString(ARG_CALORIES_REASON)
-        val ironIntakeReason = arguments?.getString(ARG_IRON_INTAKE_REASON)
+        val dishNameTextView = view.findViewById<MaterialTextView>(R.id.dishName)
+        dishNameTextView.text = foodName
 
-        // Set the text of the TextViews
-        binding.dishName.text = food
-        binding.caloriesValue.text = caloriesPerServing
-        binding.ironValue.text = ironIntakePerServing
+        // Display cropped bitmap in an ImageView
+        val imageView = view.findViewById<ImageView>(R.id.dish_image)
+        croppedBitmap?.let {
+            imageView.setImageBitmap(it)
+        }
 
-        // Set the image
-        imageResId?.let { binding.dishImage.setImageResource(it) }
+        val dishIngredients =
+            FoodRepository.dishList.find { it.Food_Name_and_Description == foodName }
 
-        // Apply color to "high" in caloriesReason and "low" in ironReason
-        applyColorToHigh(binding.caloriesReason, caloriesReason, R.color.red, "high")
-        applyColorToHigh(binding.ironReason, ironIntakeReason, R.color.green, "low")
+        // Dynamically add sections based on recommendation type
+        val nutrientContainer = view.findViewById<LinearLayout>(R.id.nutrientContainer)
+        renderNutrientsBasedOnRecommendation(nutrientContainer)
 
-        updateCaloriesValueBackgroundColor(R.color.green_background)
+        val detailsButton = view.findViewById<MaterialButton>(R.id.detailsButton)
+        detailsButton.setOnClickListener {
+            // Ensure the dish ingredients exist
+            dishIngredients?.let {
+                parentFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        SelectedDishDetailsFragment.newInstance(
+                            foodName = foodName ?: "",
+                            calories = it.Energy_calculated.toString(),
+                            proteins = it.Protein.toString(),
+                            fats = it.Total_Fat.toString(),
+                            carbs = it.Carbohydrate_total.toString(),
+                            fiber = it.Fiber_total_dietary.toString(),
+                            ingredients = listOf(
+                                "750g Chicken",
+                                "1/3 cup Soy Sauce"
+                            ) // Example ingredients
+                        )
+                    )
+                    .addToBackStack(null)
+                    .commit()
+            } ?: run {
+                Toast.makeText(
+                    requireContext(),
+                    "Dish information not available",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
-    private fun applyColorToHigh(textView: TextView, text: String?, color: Int, word: String) {
-        val highColor = ContextCompat.getColor(requireContext(), color)
-        if (!text.isNullOrEmpty()) {
-            val spannableString = SpannableString(text)
-            // Convert both text and word to lowercase for case-insensitive search
-            val start = text.lowercase().indexOf(word.lowercase())
-            if (start != -1) {
-                val end = start + word.length
+    /**
+     * Render nutrients based on the recommendation type (anemia, cardiovascular, etc.).
+     */
+    private fun renderNutrientsBasedOnRecommendation(container: LinearLayout) {
+        val profileDetail = ProfileRec.profileDetail.firstOrNull()
+        val recDish = RecommendationSystem.recommendationsList.find { it["dish"] == foodName }
+
+        recDish?.let {
+            when (profileDetail?.recommendation) {
+                "anemia" -> {
+                    // Display iron-related information for anemia
+                    addNutrientSection(
+                        container,
+                        title = "Iron Intake per Serving",
+                        amount = "${it["iron_content"].toString()} mg",
+                        classification = it["iron_classification"].toString()
+                    )
+                }
+
+                "cardiovascular" -> {
+                    // Display sodium and cholesterol-related information for cardiovascular health
+                    addNutrientSection(
+                        container,
+                        title = "Sodium Intake per Serving",
+                        amount = "${it["sodium_content"].toString()} mg",
+                        classification = it["sodium_classification"].toString()
+                    )
+                    addNutrientSection(
+                        container,
+                        title = "Cholesterol Intake per Serving",
+                        amount = "${it["cholesterol_content"].toString()} mg",
+                        classification = it["cholesterol_classification"].toString(),
+                        addPaddingTop = true // Add padding before this section
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a nutrient section with a title, amount, and reason based on the content level.
+     */
+    private fun addNutrientSection(
+        container: LinearLayout,
+        title: String,
+        amount: String,
+        classification: String,
+        addPaddingTop: Boolean = false // New parameter for padding
+    ) {
+        // Title for the Nutrient section
+        val nutrientTitleTextView = MaterialTextView(requireContext()).apply {
+            text = title
+            textSize = 20f
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+
+            // Apply padding if required (for example, between sodium and cholesterol)
+            if (addPaddingTop) {
+                setPadding(0, 16, 0, 0)
+            }
+        }
+
+        // Serving size TextView
+        val nutrientServingTextView = MaterialTextView(requireContext()).apply {
+            text = amount
+            textSize = 28f
+            setTextColor(getClassificationColor(classification))
+
+        }
+
+        val firstWord = title.split(" ").first()
+
+        // Reason TextView
+        val nutrientReasonTextView = MaterialTextView(requireContext()).apply {
+            val reasonText = when (classification.lowercase()) {
+                "high" -> "This dish contains a high amount of $firstWord content."
+                "moderate", "medium" -> "This dish has moderate $firstWord content."
+                else -> "This dish has low $firstWord content."
+            }
+
+            val spannableString = SpannableString(reasonText)
+            val color = getClassificationColor(classification)
+
+            val classificationIndex = reasonText.indexOf(classification.lowercase())
+            if (classificationIndex != -1) {
                 spannableString.setSpan(
-                    ForegroundColorSpan(highColor), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    ForegroundColorSpan(color),
+                    classificationIndex,
+                    classificationIndex + classification.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                textView.text = spannableString
-            } else {
-                textView.text = text // Fallback if "high" or "low" is not found
             }
+
+            text = spannableString
+            textSize = 16f
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
         }
+
+        // Add the views to the container
+        container.addView(nutrientTitleTextView)
+        container.addView(nutrientServingTextView)
+        container.addView(nutrientReasonTextView)
     }
 
-    private fun updateCaloriesValueBackgroundColor(colorResId: Int) {
-        val color = ContextCompat.getColor(requireContext(), colorResId)
-        val background = binding.caloriesValue.background
-        if (background is GradientDrawable) {
-            background.setColor(color)
-        }
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    companion object {
-        private const val ARG_FOOD = "arg_food"
-        private const val ARG_CALORIES_PER_SERVING = "arg_calories_per_serving"
-        private const val ARG_CALORIES_REASON = "arg_calories_reason"
-        private const val ARG_IRON_INTAKE_PER_SERVING = "arg_iron_intake_per_serving"
-        private const val ARG_IRON_INTAKE_REASON = "arg_iron_intake_reason"
-
-        private const val ARG_IMAGE_RES_ID = "arg_image_res_id"
-
-        fun newInstance(
-            food: String,
-            caloriesPerServing: String,
-            caloriesReason: String,
-            ironIntakePerServing: String,
-            ironReason: String,
-            imageResId: Int
-        ): SelectedDishFragment {
-            val args = Bundle().apply {
-                putString(ARG_FOOD, food)
-                putString(ARG_CALORIES_PER_SERVING, caloriesPerServing)
-                putString(ARG_CALORIES_REASON, caloriesReason)
-                putString(ARG_IRON_INTAKE_PER_SERVING, ironIntakePerServing)
-                putString(ARG_IRON_INTAKE_REASON, ironReason)
-                putInt(ARG_IMAGE_RES_ID, imageResId)
-            }
-            val fragment = SelectedDishFragment()
-            fragment.arguments = args
-            return fragment
+    /**
+     * Returns the classification color based on the classification level (high, moderate, low).
+     */
+    private fun getClassificationColor(classification: String): Int {
+        return when (classification.lowercase()) {
+            "high" -> ContextCompat.getColor(requireContext(), R.color.red)
+            "moderate", "medium" -> ContextCompat.getColor(requireContext(), R.color.yellow)
+            "low" -> ContextCompat.getColor(requireContext(), R.color.green)
+            else -> ContextCompat.getColor(requireContext(), R.color.blue)
         }
     }
 }

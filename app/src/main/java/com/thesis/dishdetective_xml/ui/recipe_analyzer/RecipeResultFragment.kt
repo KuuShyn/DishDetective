@@ -213,7 +213,6 @@ class RecipeResultFragment : Fragment() {
             is Number -> {
                 value.toDouble()
             }
-
             else -> 0.0
         }
     }

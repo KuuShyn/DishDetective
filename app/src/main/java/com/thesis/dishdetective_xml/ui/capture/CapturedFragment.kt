@@ -15,11 +15,10 @@ import androidx.fragment.app.Fragment
 import com.thesis.dishdetective_xml.BoundingBox
 import com.thesis.dishdetective_xml.FoodRepository
 import com.thesis.dishdetective_xml.R
+import com.thesis.dishdetective_xml.RecommendationSystem
 import com.thesis.dishdetective_xml.databinding.FragmentCapturedBinding
 import com.thesis.dishdetective_xml.ui.captured.CapturedDetailsFragment
 import com.thesis.dishdetective_xml.ui.details.SelectedDishFragment
-
-// File: CapturedFragment.kt
 
 class CapturedFragment : Fragment() {
 
@@ -95,68 +94,68 @@ class CapturedFragment : Fragment() {
     }
 
     private fun showCapturedDetails() {
-        val capturedDetailsFragment = CapturedDetailsFragment()
+        val food = boundingBoxes?.map { capitalizeWords(it.clsName) } ?: emptyList()
+        val recDish =
+            RecommendationSystem.recommendationsList.map { capitalizeWords(it["dish"] as String) }
+        val recDishScore =
+            RecommendationSystem.recommendationsList.map { it["sorting_score"] as Double }
+        Log.d("RecDish:", "$recDish")
+        Log.d("RecDishScore:", "$recDishScore")
+        Log.d("Food:", capitalizeWords("halo-halo"))
+        RecommendationSystem.logRecommendations()
+        val capturedDetailsFragment = CapturedDetailsFragment.newInstance(food)
         capturedDetailsFragment.show(parentFragmentManager, "CapturedDetailsFragment")
     }
 
-
     private fun handleTouch(x: Float, y: Float) {
-// Convert touch coordinates to bitmap coordinates
         val imageView = binding.capturedImageView
         val bitmap = capturedBitmap ?: return
         val bitmapX = x * bitmap.width / imageView.width
         val bitmapY = y * bitmap.height / imageView.height
+
         // Check if the touch is inside any of the bounding boxes
         val touchedBox = boundingBoxes?.find { box ->
             bitmapX >= box.x1 * bitmap.width && bitmapX <= box.x2 * bitmap.width &&
                     bitmapY >= box.y1 * bitmap.height && bitmapY <= box.y2 * bitmap.height
         }
-        if (touchedBox != null) {
-            val food = capitalizeWords(touchedBox.clsName)
 
-            val dish = FoodRepository.dishList.find { it.Food_Name_and_Description == food }
-            Log.d(TAG, "Touched box: ${touchedBox.clsName}")
-            Log.d(TAG, "Food Caps: $food")
+        touchedBox?.let { box ->
+            val food = capitalizeWords(box.clsName)
 
-            // If dish is found, retrieve calories and iron values
-            dish?.let {
-                val calories = it.Energy_calculated.toString()
-                val iron = it.Iron_Fe.toString()
+            // Crop the bitmap using bounding box coordinates
+            val croppedBitmap = cropBitmap(bitmap, box)
 
-                // Set the calories and iron values in the TextViews
+            // Show the details fragment and pass the cropped image
+            val detailsFragment = SelectedDishFragment.newInstance(food, croppedBitmap)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, detailsFragment)
+                .addToBackStack(null)
+                .commit()
 
-                Log.d(TAG, "Touched box: ${touchedBox.clsName}")
-                val caloriesReason = "This dish contains a high amount of calories."
-                val ironIntakeReason = "This dish contains a high amount of iron."
-                // Show the details fragment
-                val detailsFragment = SelectedDishFragment.newInstance(
-                    food,
-                    calories,
-                    caloriesReason,
-                    iron,
-                    ironIntakeReason,
-                    R.drawable.ic_iron
-                )
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, detailsFragment)
-                    .addToBackStack(null)
-                    .commit()
-                // Log for debugging
-                Log.d("SelectedDishFragment", "Calories: $calories, Iron: $iron")
-            } ?: run {
-                // Handle the case where the dish is not found
-                Log.e("SelectedDishFragment", "Dish not found")
-            }
-
-            // The touch was inside a bounding box, handle it here
-
-
+            Log.d(TAG, "Touched box: ${box.clsName}, Cropped Bitmap: ${croppedBitmap}")
         }
     }
+
+    private fun cropBitmap(bitmap: Bitmap, box: BoundingBox): Bitmap {
+        val x1 = (box.x1 * bitmap.width).toInt()
+        val y1 = (box.y1 * bitmap.height).toInt()
+        val x2 = (box.x2 * bitmap.width).toInt()
+        val y2 = (box.y2 * bitmap.height).toInt()
+
+        // Ensure the bounding box is within the bitmap boundaries
+        val width = x2 - x1
+        val height = y2 - y1
+
+        return Bitmap.createBitmap(bitmap, x1, y1, width, height)
+    }
+
 
     private fun capitalizeWords(input: String): String {
         return input.split('_').joinToString(" ") { word ->
-            word.lowercase().replaceFirstChar { it.uppercase() }
+            word.split('-').joinToString("-") { part ->
+                part.lowercase().replaceFirstChar { it.uppercase() }
+            }
         }
+
     }
-    }
+}
