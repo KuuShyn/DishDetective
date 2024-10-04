@@ -53,6 +53,22 @@ class ProfileInputFragment : Fragment() {
         genderMale = view.findViewById(R.id.genderMale)
         genderFemale = view.findViewById(R.id.genderFemale)
 
+        // Set anemiaSwitch to be turned on by default
+        anemiaSwitch.isChecked = true
+
+        // Set up listeners to ensure only one switch can be turned on at a time
+        anemiaSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                cardioSwitch.isChecked = false
+            }
+        }
+
+        cardioSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                anemiaSwitch.isChecked = false
+            }
+        }
+
         // Retrieve the arguments
         val email = arguments?.getString("email")
         val pass = arguments?.getString("pass")

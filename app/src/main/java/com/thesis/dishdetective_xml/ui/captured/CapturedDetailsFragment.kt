@@ -57,7 +57,8 @@ class CapturedDetailsFragment : BottomSheetDialogFragment() {
             val mainLayout = binding.root.findViewById<LinearLayout>(R.id.dynamicContentLayout)
 
             // 1. Dynamically add goals section based on profile recommendation
-            mainLayout.addView(createGoalsSection(context, profileDetail.recommendation))
+            mainLayout.addView(createGoalsSection(context, profileDetail.recommendation, profileDetail.weightChangeMode))
+
 
             // 2. Dynamically add recommended dishes section
             mainLayout.addView(createRecommendedDishesSection(context, recommendedDishes))
@@ -350,7 +351,8 @@ class CapturedDetailsFragment : BottomSheetDialogFragment() {
 
     private fun createGoalsSection(
         context: Context,
-        profileRecommendation: String
+        profileRecommendation: String,
+        weightChangeMode: String
     ): MaterialCardView {
         val cardView = MaterialCardView(context).apply {
             strokeColor = Color.TRANSPARENT
@@ -377,17 +379,25 @@ class CapturedDetailsFragment : BottomSheetDialogFragment() {
             }
             layout.addView(title)
 
-            // Add Goal 1: Weight loss
+            // Add Goal 1 based on weight change mode (gain, lose, maintain)
             val goal1Title = TextView(context).apply {
-                text = "Goal 1: Weight loss"
+                text = when (weightChangeMode) {
+                    "gain" -> "Goal 1: Weight gain"
+                    "lose" -> "Goal 1: Weight loss"
+                    else -> "Goal 1: Weight maintenance"
+                }
                 textSize = 16f
                 setTypeface(null, android.graphics.Typeface.BOLD)
                 setTextColor(ContextCompat.getColor(context, R.color.black))
                 setPadding(0, 8, 0, 0)
             }
+
             val goal1Description = TextView(context).apply {
-                text =
-                    "To lose weight, you need to consume fewer calories than your body burns. This forces your body to use stored fat for energy."
+                text = when (weightChangeMode) {
+                    "gain" -> "To gain weight, you need to consume more calories than your body burns. This helps your body to increase its mass."
+                    "lose" -> "To lose weight, you need to consume fewer calories than your body burns. This forces your body to use stored fat for energy."
+                    else -> "To maintain your current weight, balance your calorie intake with the number of calories your body burns."
+                }
                 textSize = 14f
                 setTextColor(ContextCompat.getColor(context, R.color.black))
                 setPadding(0, 8, 0, 0)
@@ -410,7 +420,7 @@ class CapturedDetailsFragment : BottomSheetDialogFragment() {
 
             val goal2Description = TextView(context).apply {
                 text = when (profileRecommendation) {
-                    "cardiovascular" -> "Calories, sodium, and cholesterol are key contributors to heart disease. Balancing its intake helps manage overall cardiovascular risk."
+                    "cardiovascular" -> "Calories, sodium, and cholesterol are key contributors to heart disease. Balancing their intake helps manage overall cardiovascular risk."
                     "anemia" -> "Anemia often results from low iron levels. Consuming enough iron can alleviate symptoms and improve overall health."
                     else -> "Maintaining a balanced intake of nutrients is essential for overall health."
                 }

@@ -7,9 +7,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.YuvImage
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -282,12 +284,53 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
 
 
     private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
-        val buffer = image.planes[0].buffer
-        buffer.rewind()
-        val bytes = ByteArray(buffer.capacity())
-        buffer.get(bytes)
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        return when (image.format) {
+            ImageFormat.YUV_420_888 -> {
+                // Ensure the ImageProxy has 3 planes (Y, U, and V)
+                if (image.planes.size < 3) {
+                    Log.e(TAG, "Unexpected image format with less than 3 planes")
+                    throw IllegalArgumentException("Invalid image format, expecting 3 planes for YUV_420_888")
+                }
+
+                val yBuffer = image.planes[0].buffer // Y plane
+                val uBuffer = image.planes[1].buffer // U plane
+                val vBuffer = image.planes[2].buffer // V plane
+
+                val ySize = yBuffer.remaining()
+                val uSize = uBuffer.remaining()
+                val vSize = vBuffer.remaining()
+
+                val nv21 = ByteArray(ySize + uSize + vSize)
+
+                // U and V are swapped
+                yBuffer.get(nv21, 0, ySize)
+                vBuffer.get(nv21, ySize, vSize)
+                uBuffer.get(nv21, ySize + vSize, uSize)
+
+                val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+                val out = ByteArrayOutputStream()
+                yuvImage.compressToJpeg(Rect(0, 0, image.width, image.height), 100, out)
+                val imageBytes = out.toByteArray()
+                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            }
+
+            ImageFormat.JPEG -> {
+                // Handle JPEG format directly
+                val buffer = image.planes[0].buffer
+                val bytes = ByteArray(buffer.remaining())
+                buffer.get(bytes)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            }
+
+            else -> {
+                Log.e(TAG, "Unsupported image format: ${image.format}")
+                throw IllegalArgumentException("Unsupported image format: ${image.format}")
+            }
+        }
     }
+
+
+
 
 
 
@@ -416,39 +459,34 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener,
             .setTargetAspectRatio(AspectRatio.RATIO_4_3)
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setTargetRotation(rotation)
-            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)  // Ensure correct format
             .build()
 
+
         imageAnalyzer?.setAnalyzer(cameraExecutor) { imageProxy ->
-            val bitmapBuffer =
-                Bitmap.createBitmap(
-                    imageProxy.width,
-                    imageProxy.height,
-                    Bitmap.Config.ARGB_8888
-                )
-            imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
-            imageProxy.close()
+            try {
+                // Convert ImageProxy to Bitmap
+                val bitmap = imageProxyToBitmap(imageProxy)
 
-            val matrix = Matrix().apply {
-                postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
-
-                if (isFrontCamera) {
-                    postScale(
-                        -1f,
-                        1f,
-                        imageProxy.width.toFloat(),
-                        imageProxy.height.toFloat()
-                    )
+                val matrix = Matrix().apply {
+                    postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+                    if (isFrontCamera) {
+                        postScale(-1F, 1F)
+                    }
                 }
+
+                val rotatedBitmap = Bitmap.createBitmap(
+                    bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true
+                )
+
+                detector?.detect(rotatedBitmap)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error analyzing image: ${e.message}")
+            } finally {
+                imageProxy.close() // Ensure ImageProxy is closed
             }
-
-            val rotatedBitmap = Bitmap.createBitmap(
-                bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
-                matrix, true
-            )
-
-            detector?.detect(rotatedBitmap)
         }
+
 
         cameraProvider.unbindAll()
 

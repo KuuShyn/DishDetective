@@ -28,7 +28,6 @@ data class ProfileResults(
 
 object ProfileRec {
 
-
     private val _profileDetail = mutableListOf<ProfileResults>()
     val profileDetail: List<ProfileResults> get() = _profileDetail
 
@@ -64,14 +63,14 @@ object ProfileRec {
             val document = profileDocuments.firstOrNull() ?: return null
 
             return Profile(
-                name = document.getString("name") ?: "",
-                age = document.getLong("age")?.toInt() ?: 0,
-                gender = document.getString("gender")?.lowercase() ?: "male",
-                heightFeet = document.getLong("heightFeet")?.toInt() ?: 0,
-                heightInches = document.getLong("heightInches")?.toInt() ?: 0,
-                weight = document.getDouble("weight") ?: 0.0,
-                isAnemiaChecked = document.getBoolean("isAnemiaChecked") ?: false,
-                isCardioChecked = document.getBoolean("isCardioChecked") ?: false
+                name = document.getString("name")?.also { Log.d("ProfileRec", "Name: $it") } ?: "",
+                age = document.getLong("age")?.toInt()?.also { Log.d("ProfileRec", "Age: $it") } ?: 0,
+                gender = document.getString("gender")?.lowercase()?.also { Log.d("ProfileRec", "Gender: $it") } ?: "male",
+                heightFeet = document.getLong("heightFeet")?.toInt()?.also { Log.d("ProfileRec", "Height Feet: $it") } ?: 0,
+                heightInches = document.getLong("heightInches")?.toInt()?.also { Log.d("ProfileRec", "Height Inches: $it") } ?: 0,
+                weight = document.getDouble("weight")?.also { Log.d("ProfileRec", "Weight: $it") } ?: 0.0,
+                isAnemiaChecked = document.getBoolean("isAnemiaChecked")?.also { Log.d("ProfileRec", "Is Anemia Checked: $it") } ?: false,
+                isCardioChecked = document.getBoolean("isCardioChecked")?.also { Log.d("ProfileRec", "Is Cardio Checked: $it") } ?: false
             )
 
 
@@ -87,8 +86,12 @@ object ProfileRec {
 
         val ibw = computeIbw(profile.age, heightCm)
         val (bmi, bmiCategory) = computeBmi(profile.weight, heightCm)
+        Log.d("ProfileRec", "BMI: $bmi, Category: $bmiCategory")  // Add logging here
+
         val ter = computeTer(ibw)
         val weightChangeMode = defineWeightChangeMode(bmiCategory)
+
+        Log.d("ProfileRec", "Weight Change Mode: $weightChangeMode")  // Add logging here
 
         val recommendedSodiumIntake = calculateNutrientIntake(profile.age, profile.gender, "sodium")
         val recommendedIronIntake = calculateNutrientIntake(profile.age, profile.gender, "iron")
@@ -122,7 +125,6 @@ object ProfileRec {
             recommendedSodiumIntake = recommendedSodiumIntake,
             recommendedCholesterolIntake = recommendedCholesterolIntake
         )
-
     }
 
     private fun computeIbw(age: Int, heightCm: Double): Double {

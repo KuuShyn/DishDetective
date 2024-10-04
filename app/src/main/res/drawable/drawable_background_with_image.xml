@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Gradient background -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:centerColor="#75C3C5"
+            android:endColor="#2A656C"
+            android:gradientRadius="500dp"
+            android:centerX="100%"
+            android:centerY="50%" />
+        </shape>
+    </item>
+
+    <!-- Image on top of the gradient -->
+    <item>
+        <bitmap
+            android:src="@drawable/transparent_sangkapp"
+        android:gravity="center" />
+    </item>
+
+</layer-list>
